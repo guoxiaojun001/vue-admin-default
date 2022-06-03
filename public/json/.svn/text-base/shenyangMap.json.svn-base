@@ -1,0 +1,116 @@
+{
+	"code": "1",
+	"message": "SUCCESS",
+	"data": {
+		"plot": [{
+				"areaId": "210113",
+				"top": "100px",
+				"left": "634px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210105",
+				"top": "248px",
+				"left": "566px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "210104",
+				"top": "314px",
+				"left": "702px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210114",
+				"top": "196px",
+				"left": "416px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "210106",
+				"top": "380px",
+				"left": "402px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "210103",
+				"top": "380px",
+				"left": "664px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210102",
+				"top": "468px",
+				"left": "604px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210111",
+				"top": "554px",
+				"left": "580px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210112",
+				"top": "460px",
+				"left": "800px",
+				"arrow": "tip-arrow-left"
+			}
+		],
+		"resolvePlot": [{
+				"areaId": "210113",
+				"top": "100px",
+				"left": "634px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210105",
+				"top": "232px",
+				"left": "554px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "210104",
+				"top": "314px",
+				"left": "702px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210114",
+				"top": "186px",
+				"left": "412px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "210106",
+				"top": "368px",
+				"left": "400px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "210103",
+				"top": "380px",
+				"left": "664px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210102",
+				"top": "468px",
+				"left": "604px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210111",
+				"top": "554px",
+				"left": "580px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "210112",
+				"top": "460px",
+				"left": "800px",
+				"arrow": "tip-arrow-left"
+			}
+		]
+	}
+}

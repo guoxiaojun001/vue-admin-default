@@ -1,0 +1,18 @@
+{
+	"code": "1",
+	"message": "SUCCESS",
+	"data": {
+		"plot": [{
+			"areaId": "110108",
+			"top": "292px",
+			"left": "620px",
+			"arrow": "tip-arrow-bottom-right"
+		}],
+		"resolvePlot": [{
+			"areaId": "110108",
+			"top": "276px",
+			"left": "620px",
+			"arrow": "tip-arrow-bottom-right"
+		}]
+	}
+}

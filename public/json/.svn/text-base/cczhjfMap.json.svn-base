@@ -1,0 +1,128 @@
+{
+	"code": "1",
+	"message": "SUCCESS",
+	"data": {
+		"plot": [{
+				"areaId": "220182",
+				"top": "40px",
+				"left": "750px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220183",
+				"top": "186px",
+				"left": "506px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220113",
+				"top": "276px",
+				"left": "622px",
+				"arrow": "tip-arrow-bottom"
+			},
+			{
+				"areaId": "220122",
+				"top": "206px",
+				"left": "306px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220103",
+				"top": "348px",
+				"left": "388px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220105",
+				"top": "404px",
+				"left": "494px",
+				"arrow": "tip-arrow-bottom"
+			},
+			{
+				"areaId": "220106",
+				"top": "438px",
+				"left": "328px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220104",
+				"top": "564px",
+				"left": "366px",
+				"arrow": "tip-arrow-top"
+			},
+			{
+				"areaId": "220102",
+				"top": "600px",
+				"left": "414px",
+				"arrow": "tip-arrow-top"
+			},
+			{
+				"areaId": "220112",
+				"top": "548px",
+				"left": "524px",
+				"arrow": "tip-arrow-bottom"
+			}
+		],
+		"resolvePlot": [{
+				"areaId": "220182",
+				"top": "26px",
+				"left": "750px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220183",
+				"top": "172px",
+				"left": "506px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220113",
+				"top": "264px",
+				"left": "622px",
+				"arrow": "tip-arrow-bottom"
+			},
+			{
+				"areaId": "220122",
+				"top": "192px",
+				"left": "306px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220103",
+				"top": "334px",
+				"left": "388px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220105",
+				"top": "390px",
+				"left": "494px",
+				"arrow": "tip-arrow-bottom"
+			},
+			{
+				"areaId": "220106",
+				"top": "424px",
+				"left": "328px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "220104",
+				"top": "550px",
+				"left": "366px",
+				"arrow": "tip-arrow-top"
+			},
+			{
+				"areaId": "220102",
+				"top": "586px",
+				"left": "414px",
+				"arrow": "tip-arrow-top"
+			},
+			{
+				"areaId": "220112",
+				"top": "534px",
+				"left": "524px",
+				"arrow": "tip-arrow-bottom"
+			}
+		]
+	}
+}

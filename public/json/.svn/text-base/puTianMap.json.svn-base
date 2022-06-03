@@ -1,0 +1,80 @@
+{
+	"code": "1",
+	"message": "SUCCESS",
+	"data": {
+		"plot": [{
+				"areaId": "350303",
+				"top": "244px",
+				"left": "650px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "350301",
+				"top": "256px",
+				"left": "520px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "350304",
+				"top": "330px",
+				"left": "652px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "350302",
+				"top": "386px",
+				"left": "520px",
+				"arrow": "tip-arrow-top"
+			},
+			{
+				"areaId": "350305",
+				"top": "416px",
+				"left": "650px",
+				"arrow": "tip-arrow-bottom"
+			},
+			{
+				"areaId": "350322",
+				"top": "320px",
+				"left": "318px",
+				"arrow": "tip-arrow-bottom-right"
+			}
+		],
+		"resolvePlot": [{
+				"areaId": "350303",
+				"top": "230px",
+				"left": "650px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "350301",
+				"top": "236px",
+				"left": "520px",
+				"arrow": "tip-arrow-bottom-right"
+			},
+			{
+				"areaId": "350304",
+				"top": "330px",
+				"left": "652px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "350302",
+				"top": "386px",
+				"left": "530px",
+				"arrow": "tip-arrow-top"
+			},
+			{
+				"areaId": "350305",
+				"top": "416px",
+				"left": "732px",
+				"arrow": "tip-arrow-left"
+			},
+			{
+				"areaId": "350322",
+				"top": "310px",
+				"left": "318px",
+				"arrow": "tip-arrow-bottom-right"
+			}
+		]
+	}
+}
