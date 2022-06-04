@@ -91,7 +91,7 @@
           <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
         </el-form-item>
         <el-form-item label="联系电话" prop="telephone">
-          <el-input v-model="temp.telephone" placeholder="请输入联系电话" />
+          <el-input v-model="temp.telephone" placeholder="请输入联系电话" :disabled="dialogType!='new'" />
         </el-form-item>
         <el-form-item v-if="dialogType!='message'" label="工作时长(s)" prop="usedDuration" :disabled="dialogType!='new'">
           <el-col :span="12">
