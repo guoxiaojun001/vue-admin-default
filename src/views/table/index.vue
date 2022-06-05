@@ -16,6 +16,9 @@
       <el-form-item>
         <el-button type="success" @click="handleMessage">发送信息</el-button>
       </el-form-item>
+      <el-form-item>
+        <el-button type="warning" @click="handleNotice">发送通知</el-button>
+      </el-form-item>
     </el-form>
     <el-table :data="machineList" v-loading="listLoading" @selection-change="handleSelectionChange" ref="tb" style="width: 100%;"
       border>
@@ -65,10 +68,17 @@
           {{ scope.row.machineInfo.usedDuration }}s
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="180" fixed="right">
+      <el-table-column align="center" label="访问记录">
+        <template slot-scope="scope">
+          <p>{{ scope.row.machineInfo.lastloginTime }}</p>
+          <el-tag size="mini" :type="scope.row.machineInfo.onlineStatus?'success':'info'">{{ scope.row.machineInfo.onlineStatus?"在线":"离线"}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="操作" width="240" fixed="right">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">修改</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
+          <el-button type="warning" size="small" @click="handleLock(scope)">{{scope.row.machineInfo.lockStatus?'解锁':'锁定'}}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -151,6 +161,20 @@
         <el-button type="primary" @click="confirmMachine">确认</el-button>
       </div>
     </el-dialog>
+    <el-dialog class="demo-form" title="发送通知" :visible.sync="dialogNoticeVisible">
+      <el-form :model="notice" style="width: 80%; margin-left:10%;">
+        <el-form-item label="标题">
+          <el-input v-model="notice.title"></el-input>
+        </el-form-item>
+        <el-form-item label="内容">
+          <el-input type="textarea" :rows="6" v-model="notice.content"></el-input>
+        </el-form-item>
+      </el-form>
+      <div style="text-align:right;">
+        <el-button type="danger" @click="dialogNoticeVisible=false">取消</el-button>
+        <el-button type="primary" @click="sendNotice">发送</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -189,6 +213,7 @@
       return {
         machineList: [],
         dialogVisible: false,
+        dialogNoticeVisible: false,
         dialogType: 'new',
         listLoading: true,
         total: 0,
@@ -224,6 +249,10 @@
           ]
         },
         temp:Object.assign({}, defaultMachine),
+        notice:{
+            title:"",
+            content:""
+        },
         addRules: {
           machineBrand:[{
             required: true,
@@ -403,6 +432,16 @@
         this.dialogVisible = true;
         this.temp = deepClone(this.checkedGh);
       },
+      handleNotice(){
+          if(!this.checkedGh.id){
+              this.$alert('请选择一条设备信息', '提示', {
+                  confirmButtonText: '确定',
+                  callback: action => {}
+              });
+              return false
+          }
+          this.dialogNoticeVisible = true;
+      },
       handleAddMachine() {
         this.dialogType = 'new'
         this.dialogVisible = true
@@ -432,6 +471,25 @@
           })
           .catch(err => {
             console.error(err)
+          })
+      },
+      handleLock({ $index, row }) {
+          let msg = row.machineInfo.lockStatus ? '解锁' : '锁定'
+          this.$confirm('确认要' + msg + '该设备?', '提示', {
+              confirmButtonText: '确认',
+              cancelButtonText: '取消',
+              type: 'warning'
+          })
+          .then(() => {
+              //await deleteMachine(row.machineInfo.id)
+              this.getMachines()
+              this.$message({
+                  type: 'success',
+                  message: msg + '成功'
+              })
+          })
+          .catch(err => {
+              console.error(err)
           })
       },
       confirmMachine(){
@@ -474,6 +532,9 @@
             }
           });
         }
+      },
+      sendNotice(){
+
       }
     }
   }
