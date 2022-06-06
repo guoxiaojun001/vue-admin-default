@@ -370,7 +370,7 @@
                     password: "public",
                     clean: false
                 };
-                let commonApi = "ws://39.98.108.64:1883";
+                let commonApi = "ws://39.98.108.64:8083";
                 this.client = mqtt.connect(commonApi, options);
                 this.client.on("connect", function () {
                     console.log("connect success!");
