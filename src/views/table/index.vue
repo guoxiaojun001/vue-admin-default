@@ -212,6 +212,7 @@
         },
         data() {
             return {
+                client: null,
                 machineList: [],
                 dialogVisible: false,
                 dialogNoticeVisible: false,
@@ -375,8 +376,12 @@
                 this.client.on("connect", function () {
                     console.log("connect success!");
                     //此处需要订阅两个消息，先写死吧
+                    let topic = '/' + _this.userId + '/device_status';
+                    if (_this.userType === 'admin') {
+                        topic = '/admin/device_status'
+                    }
                     _this.client.subscribe(
-                        `/machineParam/device_status`,
+                        topic,
                         _this.subscribeMesg
                     );
 
@@ -392,10 +397,6 @@
             subscribeMesg(err) {
                 if (!err) {
                     console.log("订阅成功");
-                    /*this.client.publish(
-                        'request_device_list',
-                        Encrypt('request_device_list')
-                    )*/
                 } else {
                     console.log("订阅失败", err);
                 }
@@ -526,12 +527,14 @@
                     type: 'warning'
                 })
                     .then(() => {
-                        //await deleteMachine(row.machineInfo.id)
-                        this.getMachines()
-                        this.$message({
-                            type: 'success',
-                            message: msg + '成功'
-                        })
+                        let topic = "/machineParam/device_status"; //和后台约定好的主题
+                        const param = {
+                            messsageType: 'vue_lock',
+                            lockStatus: row.machineInfo.lockStatus,
+                            userId: row.userInfo.id,
+                            machineParam: row.machineInfo.machineParam
+                        }
+                        this.client.publish(topic, JSON.stringify(param));
                     })
                     .catch(err => {
                         console.error(err)
@@ -579,7 +582,14 @@
                 }
             },
             sendNotice(){
-
+                let topic = "/machineParam/device_status"; //和后台约定好的主题
+                const param = {
+                    messsageType:'vue_notice',
+                    title:this.notice.title,
+                    content:this.notice.content,
+                    machineParam:this.checkedGh.machineParam
+                }
+                this.client.publish(topic, JSON.stringify(param));
             }
         }
     }
