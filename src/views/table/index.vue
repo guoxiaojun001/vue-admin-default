@@ -21,7 +21,7 @@
       </el-form-item>
     </el-form>
     <el-table :data="machineList" v-loading="listLoading" @selection-change="handleSelectionChange" ref="tb" style="width: 100%;"
-      border>
+              border>
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column align="center" label="设备名称" width="180">
         <template slot-scope="scope">
@@ -95,7 +95,7 @@
           <el-select v-if="userType=='admin'" v-model="temp.userId" placeholder="请选择" clearable class="filter-item">
             <el-option v-for="(item,index) in userList" :key="item.id" :label="item.username" :value="item.id"></el-option>
           </el-select>
-           <el-input v-else v-model="name" readonly/>
+          <el-input v-else v-model="name" readonly/>
         </el-form-item>
         <el-form-item label="所属地" prop="machineCity">
           <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
@@ -108,13 +108,13 @@
             <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" />
           </el-col>
           <el-col v-if="dialogType!='new'" :offset="1" :span="4">
-          <el-button type="danger" @click="temp.usedDuration=0">重置</el-button>
+            <el-button type="danger" @click="temp.usedDuration=0">重置</el-button>
           </el-col>
         </el-form-item>
         <el-form-item label="合作方式" prop="cooperationMode">
           <el-select v-model="temp.cooperationMode" placeholder="请选择" clearable class="filter-item">
             <el-option v-for='item in list.cooperationMode' :key="item.key" :label="item.text" :value="item.key"></el-option>
-            </el-select>
+          </el-select>
         </el-form-item>
         <el-form-item label="授权状态" prop="machineStatus">
           <el-select v-model="temp.machineStatus" placeholder="请选择" clearable class="filter-item">
@@ -179,365 +179,410 @@
 </template>
 
 <script>
-  import path from 'path'
-  import { deepClone } from '@/utils'
-  import { getUsers} from '@/api/user'
-  import { getMachine, addMachine, deleteMachine, updateMachine,sendMachine } from '@/api/machine'
-  import Pagination from '@/components/Pagination'
-  import VDistpicker from 'v-distpicker'
-  import { mapGetters } from 'vuex'
-  const defaultMachine = {
-    machineAttribute: "",
-    machineBrand: "",
-    machineCity: "",
-    machineCityId: "",
-    machineFunction: "",
-    machineParam: "",
-    machineProvice: "",
-    machineProviceId: "",
-    machineStatus: "",
-    cooperationMode:"",
-    machineType: "",
-    machineWorkTimeOnce: 0,
-    usedDuration:0,
-    userId:""
-  }
-
-  export default {
-    name: 'Table',
-    components: {
-      Pagination,
-      VDistpicker
-    },
-    data() {
-      return {
-        machineList: [],
-        dialogVisible: false,
-        dialogNoticeVisible: false,
-        dialogType: 'new',
-        listLoading: true,
-        total: 0,
-        listQuery: {
-          curPage: 1,
-          pageSize: 20,
-          keywords: '',
-          machineCityId:'',
-          machineProviceId: ''
-        },
-        list:{
-          cooperationMode:[
-            {text:'全款销售',key:'FullPayment'},
-            {text:'定金销售',key:'Deposit'},
-            {text:'分期付款',key:'Stages'},
-            {text:'租赁',key:'Rent'},
-            {text:'试用',key:'Trial'}
-          ],
-          machineStatus:[
-            {text:'工作',key:'Working'},
-            {text:'停止',key:'Idle'},
-            {text:'黑名单',key:'Blacklist'}
-          ],
-          machineType:[
-            {text:'光学类',key:'Optics'},
-            {text:'射频类',key:'Radiofrequency'},
-            {text:'超声类',key:'Ultrasonic'},
-            {text:'基础类',key:'Basic'},
-            {text:'其它',key:'Other'}
-          ],
-          machineFunction:[
-            {text:'美容美白',key:1}
-          ]
-        },
-        temp:Object.assign({}, defaultMachine),
-        notice:{
-            title:"",
-            content:""
-        },
-        addRules: {
-          machineBrand:[{
-            required: true,
-            message: '请输入设备名称',
-            trigger: 'blur'
-          }],
-          machineParam:[{
-            required: true,
-            message: '请输入设备ID',
-            trigger: 'blur'
-          }],
-          telephone:[{
-            required: true,
-            message: '请输入联系电话',
-            trigger: 'blur'
-          }],
-          usedDuration:[{
-            required: true,
-            message: '请输入使用时长',
-            trigger: 'blur'
-          }],
-          userId:[{
-            required: true,
-            message: '请选择所有者',
-            trigger: 'change'
-          }],
-          cooperationMode:[{
-            required: true,
-            message: '请选择',
-            trigger: 'change'
-          }],
-          machineStatus:[{
-            required: true,
-            message: '请选择',
-            trigger: 'change'
-          }],
-          machineFunction:[{
-            required: true,
-            message: '请选择',
-            trigger: 'change'
-          }],
-          machineType:[{
-            required: true,
-            message: '请选择',
-            trigger: 'change'
-          }],
-          machineCity: [{
-            required: true,
-            message: '请选择所属地',
-            trigger: 'change'
-          }]
-        },
-        apkFileList: [],
-        binFileList: [],
-        uploadType:'',
-        checkedGh:{},
-        placeholders: {
-            province: '------- 省 --------',
-            city: '--- 市 ---',
-            area: '--- 区 ---',
-        },
-        apkUrl:'',
-        binUrl:'',
-        userList:[]
-      }
-    },
-    computed: {
-      ...mapGetters([
-        'roles',
-        'userType',
-        'name',
-        'userId'
-      ]),
-      changeText(){
-        return function(value,code){
-          let val = '';
-          this.list[code].forEach((data)=>{
-            if(data.key==value){
-              val = data.text
-            }
-          })
-          return val
-        }
-      },
-      setDialogTitle(){
-        return function(value){
-          if(value=='new'){
-            return '创建'
-          }
-          if(value=='edit'){
-            return '修改'
-          }
-          if(value=='message'){
-            return '发送信息'
-          }
-        }
-      }
-    },
-    created() {
-      // Mock: get all routes and roles list from server
-      this.getMachines()
-      if(this.userType == "admin"){
-        this.getUsers()
-      }
-    },
-    methods: {
-      dialogClose(){
-        this.$refs['tempForm'].resetFields();
-      },
-      async getUsers() {
-        const res = await getUsers({})
-        this.userList = res.data;
-      },
-      getAreaName(data) {
-        this.temp.machineProvice = data.province.value
-        this.temp.machineCity = data.city.value
-        this.temp.machineProviceId = data.province.code
-        this.temp.machineCityId = data.city.code
-      },
-      getArea(data) {
-        this.listQuery.machineProviceId = data.province.code
-        this.listQuery.machineCityId = data.city.code
-      },
-      handleUpload(file){
-        let reg = "";
-        if(this.uploadType=='apk'){
-          reg = /\.apk$/
-        }
-        if(this.uploadType=='bin'){
-          reg = /\.bin/
-        }
-        if(!reg.test(file.name)){
-          this.$alert('文件格式错误，请上传'+this.uploadType+'文件', '提示', {
-            confirmButtonText: '确定',
-            callback: action => {}
-          });
-          return false
-        }
-      },
-      handleSucess(response,file,fileList){
-        if(this.uploadType=='apk'){
-          this.apkUrl = response;
-        }
-        if(this.uploadType=='bin'){
-          this.binUrl = response;
-        }
-      },
-      handleSelectionChange(selection) {
-        this.checkedGh = deepClone(Object.assign(selection[0].userInfo, selection[0].machineInfo))||{};
-        if (selection.length > 1) {
-          this.$refs.tb.clearSelection();
-          this.$refs.tb.toggleRowSelection(selection.pop());
-        }
-      },
-      handleFilter() {
-        this.listQuery.page = 1
-        this.getMachines()
-      },
-      async getMachines() {
-        this.listLoading = true
-        const res = await getMachine(this.listQuery)
-        this.machineList = res.data;
-        this.total = res.data.length;
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1000)
-      },
-      handleMessage(){
-        if(!this.checkedGh.id){
-          this.$alert('请选择一条设备信息', '提示', {
-            confirmButtonText: '确定',
-            callback: action => {}
-          });
-          return false
-        }
-        this.dialogType = 'message'
-        this.dialogVisible = true;
-        this.temp = deepClone(this.checkedGh);
-      },
-      handleNotice(){
-          if(!this.checkedGh.id){
-              this.$alert('请选择一条设备信息', '提示', {
-                  confirmButtonText: '确定',
-                  callback: action => {}
-              });
-              return false
-          }
-          this.dialogNoticeVisible = true;
-      },
-      handleAddMachine() {
-        this.dialogType = 'new'
-        this.dialogVisible = true
-        this.temp = Object.assign({}, defaultMachine);
-        this.temp.userId = this.name;
-        this.temp.userId = Number(this.userId);
-      },
-      handleEdit(scope) {
-        this.dialogType = 'edit'
-        this.dialogVisible = true
-        this.temp = deepClone(Object.assign(scope.row.userInfo, scope.row.machineInfo));
-        console.log(this.temp)
-      },
-      handleDelete({ $index, row }) {
-        this.$confirm('确认要删除该设备?', '提示', {
-            confirmButtonText: '确认',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-          .then(async () => {
-            await deleteMachine(row.machineInfo.id)
-            this.getMachines()
-            this.$message({
-              type: 'success',
-              message: '删除成功'
-            })
-          })
-          .catch(err => {
-            console.error(err)
-          })
-      },
-      handleLock({ $index, row }) {
-          let msg = row.machineInfo.lockStatus ? '解锁' : '锁定'
-          this.$confirm('确认要' + msg + '该设备?', '提示', {
-              confirmButtonText: '确认',
-              cancelButtonText: '取消',
-              type: 'warning'
-          })
-          .then(() => {
-              //await deleteMachine(row.machineInfo.id)
-              this.getMachines()
-              this.$message({
-                  type: 'success',
-                  message: msg + '成功'
-              })
-          })
-          .catch(err => {
-              console.error(err)
-          })
-      },
-      confirmMachine(){
-        this.$refs['tempForm'].validate((valid) => {
-          if (valid) {
-            this.confirmMachines()
-          }
-        })
-      },
-      async confirmMachines() {
-        let response = ""
-        if(this.dialogType === 'edit'){
-          response = await updateMachine(this.temp)
-        }
-        if(this.dialogType === 'new'){
-          response = await addMachine(this.temp)
-        }
-        if(this.dialogType === 'message'){
-          let data ={
-            // message:encodeURIComponent(this.temp),
-            message:this.temp,
-            topic:'topic'
-          }
-          if(this.apkUrl){
-            data.message.apkUrl = this.apkUrl;
-          }
-          if(this.binUrl){
-            data.message.binUrl = this.binUrl;
-          }
-
-          console.log("===发送消息=====" + data);
-          response = await sendMachine(data)
-        }
-        if(response.success){
-          this.$alert(response.msg, '提示', {
-            confirmButtonText: '确定',
-            callback: action => {
-              this.getMachines()
-              this.dialogVisible = false;
-            }
-          });
-        }
-      },
-      sendNotice(){
-
-      }
+    import path from 'path'
+    import { deepClone } from '@/utils'
+    import { getUsers} from '@/api/user'
+    import { getMachine, addMachine, deleteMachine, updateMachine,sendMachine } from '@/api/machine'
+    import Pagination from '@/components/Pagination'
+    import VDistpicker from 'v-distpicker'
+    import mqtt from "mqtt"
+    import { mapGetters } from 'vuex'
+    const defaultMachine = {
+        machineAttribute: "",
+        machineBrand: "",
+        machineCity: "",
+        machineCityId: "",
+        machineFunction: "",
+        machineParam: "",
+        machineProvice: "",
+        machineProviceId: "",
+        machineStatus: "",
+        cooperationMode:"",
+        machineType: "",
+        machineWorkTimeOnce: 0,
+        usedDuration:0,
+        userId:""
     }
-  }
+
+    export default {
+        name: 'Table',
+        components: {
+            Pagination,
+            VDistpicker
+        },
+        data() {
+            return {
+                machineList: [],
+                dialogVisible: false,
+                dialogNoticeVisible: false,
+                dialogType: 'new',
+                listLoading: true,
+                total: 0,
+                listQuery: {
+                    curPage: 1,
+                    pageSize: 20,
+                    keywords: '',
+                    machineCityId:'',
+                    machineProviceId: ''
+                },
+                list:{
+                    cooperationMode:[
+                        {text:'全款销售',key:'FullPayment'},
+                        {text:'定金销售',key:'Deposit'},
+                        {text:'分期付款',key:'Stages'},
+                        {text:'租赁',key:'Rent'},
+                        {text:'试用',key:'Trial'}
+                    ],
+                    machineStatus:[
+                        {text:'工作',key:'Working'},
+                        {text:'停止',key:'Idle'},
+                        {text:'黑名单',key:'Blacklist'}
+                    ],
+                    machineType:[
+                        {text:'光学类',key:'Optics'},
+                        {text:'射频类',key:'Radiofrequency'},
+                        {text:'超声类',key:'Ultrasonic'},
+                        {text:'基础类',key:'Basic'},
+                        {text:'其它',key:'Other'}
+                    ],
+                    machineFunction:[
+                        {text:'美容美白',key:1}
+                    ]
+                },
+                temp:Object.assign({}, defaultMachine),
+                notice:{
+                    title:"",
+                    content:""
+                },
+                addRules: {
+                    machineBrand:[{
+                        required: true,
+                        message: '请输入设备名称',
+                        trigger: 'blur'
+                    }],
+                    machineParam:[{
+                        required: true,
+                        message: '请输入设备ID',
+                        trigger: 'blur'
+                    }],
+                    telephone:[{
+                        required: true,
+                        message: '请输入联系电话',
+                        trigger: 'blur'
+                    }],
+                    usedDuration:[{
+                        required: true,
+                        message: '请输入使用时长',
+                        trigger: 'blur'
+                    }],
+                    userId:[{
+                        required: true,
+                        message: '请选择所有者',
+                        trigger: 'change'
+                    }],
+                    cooperationMode:[{
+                        required: true,
+                        message: '请选择',
+                        trigger: 'change'
+                    }],
+                    machineStatus:[{
+                        required: true,
+                        message: '请选择',
+                        trigger: 'change'
+                    }],
+                    machineFunction:[{
+                        required: true,
+                        message: '请选择',
+                        trigger: 'change'
+                    }],
+                    machineType:[{
+                        required: true,
+                        message: '请选择',
+                        trigger: 'change'
+                    }],
+                    machineCity: [{
+                        required: true,
+                        message: '请选择所属地',
+                        trigger: 'change'
+                    }]
+                },
+                apkFileList: [],
+                binFileList: [],
+                uploadType:'',
+                checkedGh:{},
+                placeholders: {
+                    province: '------- 省 --------',
+                    city: '--- 市 ---',
+                    area: '--- 区 ---',
+                },
+                apkUrl:'',
+                binUrl:'',
+                userList:[]
+            }
+        },
+        computed: {
+            ...mapGetters([
+                'roles',
+                'userType',
+                'name',
+                'userId'
+            ]),
+            changeText(){
+                return function(value,code){
+                    let val = '';
+                    this.list[code].forEach((data)=>{
+                        if(data.key==value){
+                            val = data.text
+                        }
+                    })
+                    return val
+                }
+            },
+            setDialogTitle(){
+                return function(value){
+                    if(value=='new'){
+                        return '创建'
+                    }
+                    if(value=='edit'){
+                        return '修改'
+                    }
+                    if(value=='message'){
+                        return '发送信息'
+                    }
+                }
+            }
+        },
+        created() {
+            // Mock: get all routes and roles list from server
+            this.getMachines()
+            this.initMqtt()
+            if(this.userType == "admin"){
+                this.getUsers()
+            }
+        },
+        methods: {
+            initMqtt() {
+                let _this = this;
+                var options = {
+                    //mqtt客户端的id，这里面应该还可以加上其他参数，具体看官方文档
+                    clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
+                    username: "admin",
+                    password: "public",
+                    clean: false
+                };
+                let commonApi = "ws://39.98.108.64:1883";
+                this.client = mqtt.connect(commonApi, options);
+                this.client.on("connect", function () {
+                    console.log("connect success!");
+                    //此处需要订阅两个消息，先写死吧
+                    _this.client.subscribe(
+                        `/machineParam/device_status`,
+                        _this.subscribeMesg
+                    );
+
+                });
+                //如果连接错误，打印错误
+                this.client.on("error", function (err) {
+                    console.log("err=>", err);
+                    this.client.end();
+                });
+                this.client.on("message", this.dealMessage);
+            },
+            // 订阅主题回掉函数
+            subscribeMesg(err) {
+                if (!err) {
+                    console.log("订阅成功");
+                    /*this.client.publish(
+                        'request_device_list',
+                        Encrypt('request_device_list')
+                    )*/
+                } else {
+                    console.log("订阅失败", err);
+                }
+            },
+            //获取消息回掉函数
+            dealMessage(topic, msg) {
+                console.log(topic,msg)
+            },
+            dialogClose(){
+                this.$refs['tempForm'].resetFields();
+            },
+            async getUsers() {
+                const res = await getUsers({})
+                this.userList = res.data;
+            },
+            getAreaName(data) {
+                this.temp.machineProvice = data.province.value
+                this.temp.machineCity = data.city.value
+                this.temp.machineProviceId = data.province.code
+                this.temp.machineCityId = data.city.code
+            },
+            getArea(data) {
+                this.listQuery.machineProviceId = data.province.code
+                this.listQuery.machineCityId = data.city.code
+            },
+            handleUpload(file){
+                let reg = "";
+                if(this.uploadType=='apk'){
+                    reg = /\.apk$/
+                }
+                if(this.uploadType=='bin'){
+                    reg = /\.bin/
+                }
+                if(!reg.test(file.name)){
+                    this.$alert('文件格式错误，请上传'+this.uploadType+'文件', '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {}
+                    });
+                    return false
+                }
+            },
+            handleSucess(response,file,fileList){
+                if(this.uploadType=='apk'){
+                    this.apkUrl = response;
+                }
+                if(this.uploadType=='bin'){
+                    this.binUrl = response;
+                }
+            },
+            handleSelectionChange(selection) {
+                this.checkedGh = deepClone(Object.assign(selection[0].userInfo, selection[0].machineInfo))||{};
+                if (selection.length > 1) {
+                    this.$refs.tb.clearSelection();
+                    this.$refs.tb.toggleRowSelection(selection.pop());
+                }
+            },
+            handleFilter() {
+                this.listQuery.page = 1
+                this.getMachines()
+            },
+            async getMachines() {
+                this.listLoading = true
+                const res = await getMachine(this.listQuery)
+                this.machineList = res.data;
+                this.total = res.data.length;
+                setTimeout(() => {
+                    this.listLoading = false
+                }, 1000)
+            },
+            handleMessage(){
+                if(!this.checkedGh.id){
+                    this.$alert('请选择一条设备信息', '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {}
+                    });
+                    return false
+                }
+                this.dialogType = 'message'
+                this.dialogVisible = true;
+                this.temp = deepClone(this.checkedGh);
+            },
+            handleNotice(){
+                if(!this.checkedGh.id){
+                    this.$alert('请选择一条设备信息', '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {}
+                    });
+                    return false
+                }
+                this.dialogNoticeVisible = true;
+            },
+            handleAddMachine() {
+                this.dialogType = 'new'
+                this.dialogVisible = true
+                this.temp = Object.assign({}, defaultMachine);
+                this.temp.userId = this.name;
+                this.temp.userId = Number(this.userId);
+            },
+            handleEdit(scope) {
+                this.dialogType = 'edit'
+                this.dialogVisible = true
+                this.temp = deepClone(Object.assign(scope.row.userInfo, scope.row.machineInfo));
+                console.log(this.temp)
+            },
+            handleDelete({ $index, row }) {
+                this.$confirm('确认要删除该设备?', '提示', {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                    .then(async () => {
+                        await deleteMachine(row.machineInfo.id)
+                        this.getMachines()
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功'
+                        })
+                    })
+                    .catch(err => {
+                        console.error(err)
+                    })
+            },
+            handleLock({ $index, row }) {
+                let msg = row.machineInfo.lockStatus ? '解锁' : '锁定'
+                this.$confirm('确认要' + msg + '该设备?', '提示', {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                    .then(() => {
+                        //await deleteMachine(row.machineInfo.id)
+                        this.getMachines()
+                        this.$message({
+                            type: 'success',
+                            message: msg + '成功'
+                        })
+                    })
+                    .catch(err => {
+                        console.error(err)
+                    })
+            },
+            confirmMachine(){
+                this.$refs['tempForm'].validate((valid) => {
+                    if (valid) {
+                        this.confirmMachines()
+                    }
+                })
+            },
+            async confirmMachines() {
+                let response = ""
+                if(this.dialogType === 'edit'){
+                    response = await updateMachine(this.temp)
+                }
+                if(this.dialogType === 'new'){
+                    response = await addMachine(this.temp)
+                }
+                if(this.dialogType === 'message'){
+                    let data ={
+                        // message:encodeURIComponent(this.temp),
+                        message:this.temp,
+                        topic:'topic'
+                    }
+                    if(this.apkUrl){
+                        data.message.apkUrl = this.apkUrl;
+                    }
+                    if(this.binUrl){
+                        data.message.binUrl = this.binUrl;
+                    }
+
+                    console.log("===发送消息=====" + data);
+                    response = await sendMachine(data)
+                }
+                if(response.success){
+                    this.$alert(response.msg, '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            this.getMachines()
+                            this.dialogVisible = false;
+                        }
+                    });
+                }
+            },
+            sendNotice(){
+
+            }
+        }
+    }
 </script>
 
 <style lang="scss" scoped>
