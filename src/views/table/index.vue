@@ -530,10 +530,11 @@
                         let topic = "/machineParam/device_status"; //和后台约定好的主题
                         const param = {
                             messsageType: 'vue_lock',
-                            lockStatus: row.machineInfo.lockStatus,
+                            lockStatus: row.machineInfo.lockStatus ? 0 : 1,
                             userId: row.userInfo.id,
                             machineParam: row.machineInfo.machineParam
                         }
+                        console.log("===============111======="+JSON.stringify(param));
                         this.client.publish(topic, JSON.stringify(param));
                     })
                     .catch(err => {
