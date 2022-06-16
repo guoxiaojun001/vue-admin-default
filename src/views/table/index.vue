@@ -368,7 +368,7 @@
                     //mqtt客户端的id，这里面应该还可以加上其他参数，具体看官方文档
                     clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
                     username: "admin",
-                    password: "public",
+                    password: "qunimabi#123$456",
                     clean: false
                 };
                 let commonApi = "ws://39.98.108.64:8083/mqtt";
