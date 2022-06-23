@@ -33,6 +33,11 @@
           {{ scope.row.userInfo.name }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="所属门店">
+        <template slot-scope="scope">
+          {{ scope.row.userInfo.storeName }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="所属地">
         <template slot-scope="scope">
           {{ scope.row.machineInfo.machineProvice}}{{ scope.row.machineInfo.machineCity}}
@@ -96,6 +101,11 @@
             <el-option v-for="(item,index) in userList" :key="item.id" :label="item.username" :value="item.id"></el-option>
           </el-select>
           <el-input v-else v-model="name" readonly/>
+        </el-form-item>
+        <el-form-item label="所属门店" prop="storeId">
+          <el-select v-model="temp.storeId" placeholder="请选择" clearable class="filter-item">
+            <el-option v-for="item in storeList" :key="item.id" :label="item.storeName" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="所属地" prop="machineCity">
           <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
@@ -162,7 +172,7 @@
       </div>
     </el-dialog>
     <el-dialog class="demo-form" title="发送通知" :visible.sync="dialogNoticeVisible">
-      <el-form :model="notice" style="width: 80%; margin-left:10%;">
+      <el-form :model="notice" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="标题">
           <el-input v-model="notice.title"></el-input>
         </el-form-item>
@@ -182,6 +192,7 @@
     import path from 'path'
     import { deepClone } from '@/utils'
     import { getUsers} from '@/api/user'
+    import { getAllStore } from '@/api'
     import { getMachine, addMachine, deleteMachine, updateMachine,sendMachine } from '@/api/machine'
     import Pagination from '@/components/Pagination'
     import VDistpicker from 'v-distpicker'
@@ -201,7 +212,8 @@
         machineType: "",
         machineWorkTimeOnce: 0,
         usedDuration:0,
-        userId:""
+        userId:"",
+        storeId:""
     }
 
     export default {
@@ -281,6 +293,11 @@
                         message: '请选择所有者',
                         trigger: 'change'
                     }],
+                    storeId:[{
+                        required: true,
+                        message: '请选择所属门店',
+                        trigger: 'change'
+                    }],
                     cooperationMode:[{
                         required: true,
                         message: '请选择',
@@ -318,7 +335,8 @@
                 },
                 apkUrl:'',
                 binUrl:'',
-                userList:[]
+                userList:[],
+                storeList:[]
             }
         },
         computed: {
@@ -357,11 +375,16 @@
             // Mock: get all routes and roles list from server
             this.getMachines()
             this.initMqtt()
+            this.getAllStore()
             if(this.userType == "admin"){
                 this.getUsers()
             }
         },
         methods: {
+            async getAllStore() {
+                const res = await getAllStore(this.listQuery)
+                this.storeList = res.data;
+            },
             initMqtt() {
                 let _this = this;
                 var options = {
@@ -536,6 +559,7 @@
                         }
                         console.log("===============111======="+JSON.stringify(param));
                         this.client.publish(topic, JSON.stringify(param));
+                        this.getMachines()
                     })
                     .catch(err => {
                         console.error(err)
@@ -591,6 +615,7 @@
                     machineParam:this.checkedGh.machineParam
                 }
                 this.client.publish(topic, JSON.stringify(param));
+                this.dialogNoticeVisible = false;
             }
         }
     }

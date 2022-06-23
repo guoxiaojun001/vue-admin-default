@@ -65,6 +65,44 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
+  }
+]
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/role',
+    alwaysShow: true,
+    name: 'User',
+    meta: { title: '用户管理', icon: 'peoples' },
+    children: [
+      {
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/user/index'),
+        meta: { title: '用户管理', icon: 'el-icon-user' }
+      }
+    ]
+  },
+  {
+    path: '/shop',
+    component: Layout,
+    redirect: '/shop/index',
+    alwaysShow: true,
+    name: 'Shop',
+    meta: { title: '门店管理', icon: 'tab'},
+    children: [
+      {
+        path: 'index',
+        name: 'ShopIndex',
+        component: () => import('@/views/shop/index'),
+        meta: { title: '我的门店', icon: 'documentation' }
+      }
+    ]
   },
   {
     path: '/example',
@@ -81,29 +119,24 @@ export const constantRoutes = [
         meta: { title: '我的设备', icon: 'table' }
       }
     ]
-  }
-]
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
+  },
   {
-    path: '/user',
+    path: '/order',
     component: Layout,
-    redirect: '/user/role',
+    redirect: '/order/index',
     alwaysShow: true,
-    name: 'User',
-    meta: { title: '客户管理', icon: 'el-icon-user-solid', roles: ['admin'] },
+    name: 'Order',
+    meta: { title: '订单管理', icon: 'list' },
     children: [
       {
-        path: 'role',
-        name: 'Role',
-        component: () => import('@/views/user/index'),
-        meta: { title: '我的客户', icon: 'el-icon-user', roles: ['admin'] }
+        path: 'index',
+        name: 'OrderIndex',
+        component: () => import('@/views/order/index'),
+        meta: { title: '我的订单', icon: 'form' }
       }
     ]
   },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
   ]
