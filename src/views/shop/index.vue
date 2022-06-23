@@ -116,7 +116,7 @@
           <el-input v-model="store.telephone" placeholder="请输入联系人电话" />
         </el-form-item>
         <el-form-item label="设备数量" prop="deviceCount">
-          <el-input v-model.number="store.deviceCount" placeholder="请输入设备数量" />
+          <el-input v-model.number="store.deviceCount" placeholder="请输入设备数量" readonly/>
         </el-form-item>
         <el-form-item label="创建时间" prop="createTime">
           <el-date-picker
@@ -157,7 +157,7 @@ const defaultRole = {
   contactPerson: '',
   telephone: '',
   address: '',
-  deviceCount: '',
+  deviceCount: 0,
   agentId:'',
   code:"",
   createTime:"",
