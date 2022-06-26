@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :inline="true" :model="listQuery" class="demo-form-inline">
       <el-form-item label="">
-        <el-input v-model="listQuery.parms" placeholder="用户类型/联系人姓名/电话"></el-input>
+        <el-input style="width: 300px;" prefix-icon="el-icon-search" v-model="listQuery.parms" placeholder="用户类型/联系人姓名/电话"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="rolesList.page" :limit.sync="rolesList.limit" @pagination="getUsers" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getUsers" />
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'修改':'创建'" @close="dialogClose">
       <el-form ref="tempForm" :model="role" :rules="rules" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="用户类型" prop="userType">
@@ -132,9 +132,8 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 20,
-        name: '',
-        telephone: '',
+        limit: 10,
+        parms: ''
       },
       rules: {
         userType:[{

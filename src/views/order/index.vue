@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-      <el-form-item label="订单号">
-        <el-input v-model="listQuery.orderNo" placeholder="订单号"></el-input>
+      <el-form-item label="">
+        <el-input style="width: 300px;" prefix-icon="el-icon-search" v-model="listQuery.parms" placeholder="订单号"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
@@ -58,7 +58,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="rolesList.page" :limit.sync="rolesList.limit" @pagination="getOrderList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getOrderList" />
     <el-dialog :visible.sync="dialogVisible" title="详情" @close="dialogClose">
       <el-form ref="tempForm" :model="role" label-width="80px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="订单号" prop="companyName">
@@ -95,7 +95,7 @@
 
 <script>
 import { deepClone } from '@/utils'
-import { getOrderList } from '@/api'
+import { getOrderList,deleteOrder } from '@/api'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -112,7 +112,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        orderNo: '',
+        parms: '',
       }
     }
   },
@@ -147,6 +147,7 @@ export default {
         type: 'warning'
       })
         .then(async() => {
+          await deleteOrder(row.id)
           this.getOrderList();
           this.$message({
             type: 'success',

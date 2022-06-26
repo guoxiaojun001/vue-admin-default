@@ -1,11 +1,8 @@
 <template>
   <div class="app-container">
     <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-      <el-form-item label="门店名称">
-        <el-input v-model="listQuery.storeName" placeholder="门店名称"></el-input>
-      </el-form-item>
-      <el-form-item label="联系人电话">
-        <el-input v-model="listQuery.telephone" placeholder="联系人电话"></el-input>
+      <el-form-item label="">
+        <el-input style="width: 300px;" prefix-icon="el-icon-search" v-model="listQuery.parms" placeholder="门店名称/联系人电话"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
@@ -15,47 +12,6 @@
       </el-form-item>
     </el-form>
     <el-table :data="storeList" v-loading="listLoading"  style="width: 100%;" border >
-      <!--<el-table-column type="expand">
-        <template slot-scope="scope">
-          <el-table :data="scope.row.machineEntityList" style="width: 100%;" border >
-            <el-table-column align="center" label="设备名称">
-              <template slot-scope="props">
-                {{ props.row.machineBrand }}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="所属地">
-              <template slot-scope="props">
-                {{ props.row.machineProvice }}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="合作方式">
-              <template slot-scope="props">
-                {{ changeText(props.row.cooperationMode,'cooperationMode') }}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="授权状态">
-              <template slot-scope="props">
-                {{ changeText(props.row.machineStatus,'machineStatus') }}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="设备类型">
-              <template slot-scope="props">
-                {{ changeText(props.row.machineType,'machineType') }}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="功能类型">
-              <template slot-scope="props">
-                {{ changeText(props.row.machineFunction,'machineFunction') }}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="工作时长">
-              <template slot-scope="props">
-                {{ props.row.usedDuration }}s
-              </template>
-            </el-table-column>
-          </el-table>
-        </template>
-      </el-table-column>-->
       <el-table-column align="center" label="ID" width="80" prop="id" sortable>
       </el-table-column>
       <el-table-column align="center" label="门店名称">
@@ -95,7 +51,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="storeList.page" :limit.sync="storeList.limit" @pagination="getAllStore" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getAllStore" />
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'修改':'创建'" @close="dialogClose">
       <el-form ref="tempForm" :model="store" :rules="rules" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="门店名称" prop="storeName">
@@ -208,9 +164,8 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 20,
-        name: '',
-        telephone: '',
+        limit: 10,
+        parms:'',
       },
       rules: {
         storeName:[{

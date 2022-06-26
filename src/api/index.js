@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getAllStore(data) {
   return request({
-    url: '/store/queryAllStore',
+    url: '/store/storeInfoListByParms',
     method: 'post',
     data
   })
@@ -32,8 +32,15 @@ export function deleteStore(id) {
 
 export function getOrderList(data) {
   return request({
-    url: '/order/queryAllOrder',
+    url: '/order/queryOrderList',
     method: 'post',
     data
+  })
+}
+
+export function deleteOrder(id) {
+  return request({
+    url: '/order/deleteOrder?id='+id,
+    method: 'post'
   })
 }

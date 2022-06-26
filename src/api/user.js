@@ -25,7 +25,7 @@ export function logout() {
 
 export function getUsers(data) {
   return request({
-    url: '/user/queryUserList',
+    url: '/user/selectUserInfoByParmAndStoreCount',
     method: 'post',
     data
   })

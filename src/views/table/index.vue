@@ -2,10 +2,7 @@
   <div class="app-container">
     <el-form :inline="true" :model="listQuery" class="demo-form-inline">
       <el-form-item label="">
-        <el-input style="width: 300px;" prefix-icon="el-icon-search" v-model="listQuery.keywords" placeholder="设备名称/设备类型/所有者/联系电话"></el-input>
-      </el-form-item>
-      <el-form-item label="所属地">
-        <v-distpicker @selected="getArea" hide-area/>
+        <el-input style="width: 300px;" prefix-icon="el-icon-search" v-model="listQuery.parms" placeholder="设备名称/设备类型/所有者/联系电话"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
@@ -234,9 +231,7 @@
                 listQuery: {
                     curPage: 1,
                     pageSize: 20,
-                    keywords: '',
-                    machineCityId:'',
-                    machineProviceId: ''
+                    parms: ''
                 },
                 list:{
                     cooperationMode:[
