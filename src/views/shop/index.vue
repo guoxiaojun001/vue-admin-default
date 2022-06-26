@@ -36,7 +36,7 @@
       </el-table-column>
       <el-table-column align="center" label="联系人电话">
         <template slot-scope="scope">
-          {{ scope.row.telephone }}
+          {{ scope.row.contactPhone }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="设备数量">
@@ -68,8 +68,8 @@
         <el-form-item label="联系人姓名" prop="contactPerson">
           <el-input v-model="store.contactPerson" placeholder="请输入联系人姓名" />
         </el-form-item>
-        <el-form-item label="联系人电话" prop="telephone">
-          <el-input v-model="store.telephone" placeholder="请输入联系人电话" />
+        <el-form-item label="联系人电话" prop="contactPhone">
+          <el-input v-model="store.contactPhone" placeholder="请输入联系人电话" />
         </el-form-item>
         <el-form-item label="设备数量" prop="deviceCount">
           <el-input v-model.number="store.deviceCount" placeholder="请输入设备数量" readonly/>
@@ -111,7 +111,7 @@ import { mapGetters } from 'vuex'
 const defaultRole = {
   storeName: '',
   contactPerson: '',
-  telephone: '',
+  contactPhone: '',
   address: '',
   deviceCount: 0,
   agentId:'',
@@ -188,7 +188,7 @@ export default {
           message: '请输入联系人姓名',
           trigger: 'blur'
         }],
-        telephone:[{
+        contactPhone:[{
           required: true,
           validator: rule.checkPhone,
           trigger: 'blur'
@@ -312,7 +312,7 @@ export default {
       this.getAllStore()
       this.dialogVisible = false
       this.$notify({
-        title: '添加成功',
+        title: isEdit?'修改成功':'添加成功',
         dangerouslyUseHTMLString: true,
         type: 'success'
       })

@@ -248,7 +248,7 @@ export default {
       this.getUsers()
       this.dialogVisible = false
       this.$notify({
-        title: '添加成功',
+        title: isEdit?'修改成功':'添加成功',
         dangerouslyUseHTMLString: true,
         type: 'success'
       })

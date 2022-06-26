@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getMachine(data) {
   return request({
-    url: '/machine//machine/commonSearchMachineList',
+    url: '/machine/commonSearchMachineList',
     method: 'post',
     data
   })
