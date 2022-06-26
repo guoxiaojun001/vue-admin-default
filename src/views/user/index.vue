@@ -132,7 +132,7 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 20,
         parms: ''
       },
       rules: {

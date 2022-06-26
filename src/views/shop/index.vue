@@ -41,7 +41,7 @@
       </el-table-column>
       <el-table-column align="center" label="设备数量">
         <template slot-scope="scope">
-          {{ scope.row.deviceCount }}
+          {{ scope.row.newDeviceCount }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -71,8 +71,8 @@
         <el-form-item label="联系人电话" prop="contactPhone">
           <el-input v-model="store.contactPhone" placeholder="请输入联系人电话" />
         </el-form-item>
-        <el-form-item label="设备数量" prop="deviceCount">
-          <el-input v-model.number="store.deviceCount" placeholder="请输入设备数量" readonly/>
+        <el-form-item label="设备数量" prop="newDeviceCount">
+          <el-input v-model.number="store.newDeviceCount" placeholder="请输入设备数量" readonly disabled/>
         </el-form-item>
         <el-form-item label="创建时间" prop="createTime">
           <el-date-picker
@@ -113,10 +113,10 @@ const defaultRole = {
   contactPerson: '',
   contactPhone: '',
   address: '',
-  deviceCount: 0,
+  newDeviceCount: 0,
   agentId:'',
   code:"",
-  createTime:"",
+  createTime:new Date(),
   version:0
 }
 
@@ -164,7 +164,7 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 20,
         parms:'',
       },
       rules: {
@@ -193,7 +193,7 @@ export default {
           validator: rule.checkPhone,
           trigger: 'blur'
         }],
-        deviceCount:[{
+        newDeviceCount:[{
           required: true,
           message: '请输入设备数量',
           trigger: 'blur'

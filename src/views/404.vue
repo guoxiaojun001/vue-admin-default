@@ -8,7 +8,7 @@
         <img class="pic-404__child right" src="@/assets/404_images/404_cloud.png" alt="404">
       </div>
       <div class="bullshit">
-        <a href="" class="bullshit__return-home">返回首页</a>
+        <a class="bullshit__return-home" @click="logout">重新登录</a>
       </div>
     </div>
   </div>
@@ -22,6 +22,12 @@ export default {
     message() {
       return 'The webmaster said that you can not enter this page...'
     }
+  },
+  methods: {
+      async logout() {
+          await this.$store.dispatch('user/logout')
+          this.$router.push('/login')
+      }
   }
 }
 </script>

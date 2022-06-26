@@ -22,65 +22,60 @@
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column align="center" label="设备名称" width="180">
         <template slot-scope="scope">
-          {{ scope.row.machineInfo.machineBrand }}
+          {{ scope.row.machineBrand }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="所有者">
         <template slot-scope="scope">
-          {{ scope.row.userInfo.name }}
+          {{ scope.row.userId }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="所属门店">
         <template slot-scope="scope">
-          {{ scope.row.userInfo.storeName }}
+          {{ scope.row.storeId }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="所属地">
         <template slot-scope="scope">
-          {{ scope.row.machineInfo.machineProvice}}{{ scope.row.machineInfo.machineCity}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="联系电话">
-        <template slot-scope="scope">
-          {{ scope.row.userInfo.telephone }}
+          {{ scope.row.machineProvice}}{{ scope.row.machineCity}}
         </template>
       </el-table-column>
       <el-table-column align="center" label="合作方式">
         <template slot-scope="scope">
-          {{ changeText(scope.row.machineInfo.cooperationMode,'cooperationMode') }}
+          {{ changeText(scope.row.cooperationMode,'cooperationMode') }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="授权状态">
         <template slot-scope="scope">
-          {{ changeText(scope.row.machineInfo.machineStatus,'machineStatus') }}
+          {{ changeText(scope.row.machineStatus,'machineStatus') }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="设备类型">
         <template slot-scope="scope">
-          {{ changeText(scope.row.machineInfo.machineType,'machineType') }}
+          {{ changeText(scope.row.machineType,'machineType') }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="功能类型">
         <template slot-scope="scope">
-          {{ changeText(scope.row.machineInfo.machineFunction,'machineFunction') }}
+          {{ changeText(scope.row.machineFunction,'machineFunction') }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="工作时长">
         <template slot-scope="scope">
-          {{ scope.row.machineInfo.usedDuration }}s
+          {{ scope.row.usedDuration }}s
         </template>
       </el-table-column>
       <el-table-column align="center" label="访问记录">
         <template slot-scope="scope">
-          <p>{{ scope.row.machineInfo.lastloginTime }}</p>
-          <el-tag size="mini" :type="scope.row.machineInfo.onlineStatus?'success':'info'">{{ scope.row.machineInfo.onlineStatus?"在线":"离线"}}</el-tag>
+          <p>{{ scope.row.lastloginTime }}</p>
+          <el-tag size="mini" :type="scope.row.onlineStatus?'success':'info'">{{ scope.row.onlineStatus?"在线":"离线"}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" width="240" fixed="right">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">修改</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
-          <el-button type="warning" size="small" @click="handleLock(scope)">{{scope.row.machineInfo.lockStatus?'解锁':'锁定'}}</el-button>
+          <el-button type="warning" size="small" @click="handleLock(scope)">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -107,12 +102,9 @@
         <el-form-item label="所属地" prop="machineCity">
           <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
         </el-form-item>
-        <el-form-item label="联系电话" prop="telephone">
-          <el-input v-model="temp.telephone" placeholder="请输入联系电话" :disabled="dialogType!='new'" />
-        </el-form-item>
-        <el-form-item v-if="dialogType!='message'" label="工作时长(s)" prop="usedDuration" :disabled="dialogType!='new'">
+        <el-form-item v-if="dialogType!='message'" label="工作时长(s)" prop="usedDuration">
           <el-col :span="12">
-            <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" />
+            <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" disabled/>
           </el-col>
           <el-col v-if="dialogType!='new'" :offset="1" :span="4">
             <el-button type="danger" @click="temp.usedDuration=0">重置</el-button>
@@ -271,11 +263,6 @@
                     machineParam:[{
                         required: true,
                         message: '请输入设备ID',
-                        trigger: 'blur'
-                    }],
-                    telephone:[{
-                        required: true,
-                        message: '请输入联系电话',
                         trigger: 'blur'
                     }],
                     usedDuration:[{
@@ -465,7 +452,7 @@
                 }
             },
             handleSelectionChange(selection) {
-                this.checkedGh = deepClone(Object.assign(selection[0].userInfo, selection[0].machineInfo))||{};
+                this.checkedGh = deepClone(selection[0])||{};
                 if (selection.length > 1) {
                     this.$refs.tb.clearSelection();
                     this.$refs.tb.toggleRowSelection(selection.pop());
@@ -516,8 +503,9 @@
             handleEdit(scope) {
                 this.dialogType = 'edit'
                 this.dialogVisible = true
-                this.temp = deepClone(Object.assign(scope.row.userInfo, scope.row.machineInfo));
-                console.log(this.temp)
+                this.$nextTick(()=>{
+                    this.temp = deepClone(scope.row);
+                });
             },
             handleDelete({ $index, row }) {
                 this.$confirm('确认要删除该设备?', '提示', {
@@ -526,7 +514,7 @@
                     type: 'warning'
                 })
                     .then(async () => {
-                        await deleteMachine(row.machineInfo.id)
+                        await deleteMachine(row.id)
                         this.getMachines()
                         this.$message({
                             type: 'success',
@@ -538,7 +526,7 @@
                     })
             },
             handleLock({ $index, row }) {
-                let msg = row.machineInfo.lockStatus ? '解锁' : '锁定'
+                let msg = row.lockStatus ? '解锁' : '锁定'
                 this.$confirm('确认要' + msg + '该设备?', '提示', {
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',
@@ -548,9 +536,9 @@
                         let topic = "/machineParam/device_status"; //和后台约定好的主题
                         const param = {
                             messsageType: 'vue_lock',
-                            lockStatus: row.machineInfo.lockStatus ? 0 : 1,
-                            userId: row.userInfo.id,
-                            machineParam: row.machineInfo.machineParam
+                            lockStatus: row.lockStatus ? 0 : 1,
+                            userId: row.userId,
+                            machineParam: row.machineParam
                         }
                         console.log("===============111======="+JSON.stringify(param));
                         this.client.publish(topic, JSON.stringify(param));

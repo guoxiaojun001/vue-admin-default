@@ -51,7 +51,7 @@
           {{ scope.row.machineParam}}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作">
+      <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">查看</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
@@ -125,7 +125,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      this.getUsers()
+      this.getOrderList()
     },
     async getOrderList() {
       this.listLoading = true;
