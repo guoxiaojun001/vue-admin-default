@@ -44,3 +44,12 @@ export function deleteOrder(id) {
     method: 'post'
   })
 }
+
+export function addOrder() {
+  return request({
+    url: '/order/addOrder',
+    method: 'post',
+    data
+  })
+}
+

@@ -20,19 +20,19 @@
     <el-table :data="machineList" v-loading="listLoading" @selection-change="handleSelectionChange" ref="tb" style="width: 100%;"
               border>
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column align="center" label="设备名称" width="180">
+      <el-table-column align="center" label="设备名称" width="140">
         <template slot-scope="scope">
           {{ scope.row.machineBrand }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="所有者">
         <template slot-scope="scope">
-          {{ scope.row.userId }}
+          {{ scope.row.owner }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="所属门店">
         <template slot-scope="scope">
-          {{ scope.row.storeId }}
+          {{ scope.row.belongsStore }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="所属地">
@@ -68,14 +68,15 @@
       <el-table-column align="center" label="访问记录">
         <template slot-scope="scope">
           <p>{{ scope.row.lastloginTime }}</p>
-          <el-tag size="mini" :type="scope.row.onlineStatus?'success':'info'">{{ scope.row.onlineStatus?"在线":"离线"}}</el-tag>
+          <el-tag size="mini" :type="scope.row.onlineStatus==1?'success':'info'">{{ scope.row.onlineStatus==1?"在线":"离线"}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="240" fixed="right">
+      <el-table-column align="center" label="操作" width="300" fixed="right">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">修改</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
-          <el-button type="warning" size="small" @click="handleLock(scope)">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
+          <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="!scope.row.onlineStatus">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
+          <el-button type="primary" size="small" @click="createOrder(scope)">创建订单</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -174,6 +175,66 @@
         <el-button type="primary" @click="sendNotice">发送</el-button>
       </div>
     </el-dialog>
+    <el-dialog class="demo-form" title="创建订单" :visible.sync="dialogOrderVisible">
+      <el-form :rules="addOrderRules" :model="order" ref="tempOrderForm" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
+        <el-form-item label="设备名称" prop="machineBrand">
+          <el-input v-model="order.machineBrand" placeholder="请输入设备名称" readonly/>
+        </el-form-item>
+        <el-form-item label="设备ID" prop="machineParam">
+          <el-input v-model="order.machineParam" placeholder="请输入设备ID" :disabled="dialogType!='new'" readonly/>
+        </el-form-item>
+        <el-form-item label="所有者" prop="userId">
+          <el-select v-if="userType=='admin'" v-model="order.userId" placeholder="请选择" clearable class="filter-item">
+            <el-option v-for="(item,index) in userList" :key="item.id" :label="item.username" :value="item.id"></el-option>
+          </el-select>
+          <el-input v-else v-model="name" readonly/>
+        </el-form-item>
+        <el-form-item label="所属门店" prop="storeId">
+          <el-select v-model="order.storeId" placeholder="请选择" clearable class="filter-item">
+            <el-option v-for="item in storeList" :key="item.id" :label="item.storeName" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="订单号" prop="companyName">
+          <el-input v-model="order.orderNo"/>
+        </el-form-item>
+        <el-form-item label="订单类型" prop="companyName">
+          <el-input v-model="order.orderType"/>
+        </el-form-item>
+        <el-form-item label="订单状态" prop="companyName">
+          <el-input v-model="order.orderStatus"/>
+        </el-form-item>
+        <el-form-item label="下单时间" prop="createTime">
+          <el-date-picker
+            v-model="order.createTime"
+            type="date"
+            placeholder="选择下单时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="项目内容" prop="orderContent">
+          <el-input v-model="order.orderContent"/>
+        </el-form-item>
+        <el-form-item label="操作时间" prop="operationTime">
+          <el-date-picker
+            v-model="order.operationTime"
+            type="date"
+            placeholder="选择下单时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="价格" prop="price">
+          <el-input v-model="order.price"/>
+        </el-form-item>
+        <el-form-item label="付款状态" prop="payStatus">
+          <el-input v-model="order.payStatus"/>
+        </el-form-item>
+        <el-form-item label="下单人" prop="machineParam">
+          <el-input v-model="order.machineParam"/>
+        </el-form-item>
+      </el-form>
+      <div style="text-align:right;">
+        <el-button type="danger" @click="dialogOrderVisible=false">取消</el-button>
+        <el-button type="primary" @click="OrderSave">创建</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -181,7 +242,7 @@
     import path from 'path'
     import { deepClone } from '@/utils'
     import { getUsers} from '@/api/user'
-    import { getAllStore } from '@/api'
+    import { getAllStore,addOrder } from '@/api'
     import { getMachine, addMachine, deleteMachine, updateMachine,sendMachine } from '@/api/machine'
     import Pagination from '@/components/Pagination'
     import VDistpicker from 'v-distpicker'
@@ -204,7 +265,18 @@
         userId:"",
         storeId:""
     }
-
+    const defaultOrder = {
+        "agentId": "",
+        "createTime": "",
+        "machineParam": "",
+        "operationTime": "",
+        "orderContent": "",
+        "orderNo": "",
+        "orderStatus": "",
+        "payStatus": "",
+        "price": "",
+        "store_id": ""
+    }
     export default {
         name: 'Table',
         components: {
@@ -217,6 +289,7 @@
                 machineList: [],
                 dialogVisible: false,
                 dialogNoticeVisible: false,
+                dialogOrderVisible:false,
                 dialogType: 'new',
                 listLoading: true,
                 total: 0,
@@ -306,6 +379,9 @@
                         trigger: 'change'
                     }]
                 },
+                addOrderRules:{
+
+                },
                 apkFileList: [],
                 binFileList: [],
                 uploadType:'',
@@ -318,7 +394,8 @@
                 apkUrl:'',
                 binUrl:'',
                 userList:[],
-                storeList:[]
+                storeList:[],
+                order:Object.assign({}, defaultOrder)
             }
         },
         computed: {
@@ -547,6 +624,29 @@
                     .catch(err => {
                         console.error(err)
                     })
+            },
+            createOrder(scope){
+                this.dialogOrderVisible = true;
+                this.order.machineBrand = scope.row.machineBrand;
+                this.order.machineParam = scope.row.machineParam;
+                console.log(scope)
+            },
+            OrderSave(){
+                this.$refs['tempOrderForm'].validate(async(valid) => {
+                    if (valid) {
+                        let response = await addOrder(this.order);
+                        if(response.success){
+                            this.$alert(response.msg, '提示', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    this.getMachines()
+                                    this.dialogOrderVisible = false;
+                                }
+                            });
+                        }
+                    }
+                })
+
             },
             confirmMachine(){
                 this.$refs['tempForm'].validate((valid) => {
