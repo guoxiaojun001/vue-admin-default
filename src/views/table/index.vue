@@ -81,7 +81,7 @@
           <el-button type="primary" size="small" @click="handleEdit(scope)">查看</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
           <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="scope.row.onlineStatus!=1">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
-          <el-button type="primary" size="small" @click="createOrder(scope)" :disabled="scope.row.cooperationMode!='FullPayment'" >创建订单</el-button>
+          <el-button type="primary" size="small" @click="createOrder(scope)" :disabled="scope.row.cooperationMode=='FullPayment'" >创建订单</el-button>
         </template>
       </el-table-column>
     </el-table>
