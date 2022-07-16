@@ -66,15 +66,16 @@
         <el-form-item label="充值次数" prop="price">
           <el-input v-model="role.price" disabled/>
         </el-form-item>
-        <el-form-item label="订单状态" prop="orderStatus">
-          <el-select v-model="role.orderStatus" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for='item in list.orderStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="付款状态" prop="payStatus">
           <el-select v-model="role.payStatus" placeholder="请选择" clearable class="filter-item">
             <el-option v-for='item in list.payStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="设备名称" prop="machineBrand">
+          <el-input v-model="role.machineBrand" disabled/>
+        </el-form-item>
+        <el-form-item label="设备ID" prop="machineParam">
+          <el-input v-model="role.machineParam" disabled/>
         </el-form-item>
       </el-form>
       <div style="text-align:right;">

@@ -124,10 +124,9 @@
             </el-col>
           </el-form-item>
           <el-form-item label="合作方式" prop="cooperationMode">
-            <el-select v-if="userType=='admin'" v-model="temp.cooperationMode" placeholder="请选择" clearable class="filter-item">
+            <el-select v-model="temp.cooperationMode" placeholder="请选择" clearable class="filter-item">
               <el-option v-for='item in list.cooperationMode' :key="item.key" :label="item.text" :value="item.key"></el-option>
             </el-select>
-            <el-input v-else :value="changeText(temp.cooperationMode,'cooperationMode')" disabled/>
           </el-form-item>
           <el-form-item label="授权状态" prop="machineStatus">
             <el-select v-model="temp.machineStatus" placeholder="请选择" clearable class="filter-item">

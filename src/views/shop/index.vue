@@ -44,7 +44,12 @@
           {{ scope.row.newDeviceCount }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作">
+      <el-table-column align="center" label="创建时间">
+        <template slot-scope="scope">
+          {{ scope.row.createTime }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="操作" width="160" >
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">修改</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
@@ -78,7 +83,8 @@
           <el-date-picker
             v-model="store.createTime"
             type="date"
-            placeholder="选择创建时间">
+            placeholder="选择创建时间"
+            :disabled="dialogType==='edit'">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="门店地址" prop="address">
