@@ -11,7 +11,7 @@
         <el-button type="primary" icon="el-icon-edit" @click="handleAddMachine">创建</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="success" @click="handleMessage">发送信息</el-button>
+        <el-button type="success" @click="handleMessage">升级</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="warning" @click="handleNotice">发送通知</el-button>
@@ -62,7 +62,12 @@
       </el-table-column>
       <el-table-column align="center" label="工作时长">
         <template slot-scope="scope">
-          {{ scope.row.usedDuration }}s
+          {{ scope.row.cooperationMode=='FullPayment'?'-':scope.row.usedDuration+'s' }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="剩余时间">
+        <template slot-scope="scope">
+          {{ scope.row.cooperationMode=='FullPayment'?'-':scope.row.leftTime+'s' }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="访问记录">
@@ -73,88 +78,99 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="300" fixed="right">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">修改</el-button>
+          <el-button type="primary" size="small" @click="handleEdit(scope)">查看</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
-          <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="!scope.row.onlineStatus">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
-          <el-button type="primary" size="small" @click="createOrder(scope)">创建订单</el-button>
+          <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="scope.row.onlineStatus!=1">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
+          <el-button type="primary" size="small" @click="createOrder(scope)" :disabled="scope.row.cooperationMode!='FullPayment'" >创建订单</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.curPage" :limit.sync="listQuery.pageSize" @pagination="getMachines" />
     <el-dialog class="demo-form" :visible.sync="dialogVisible" :title="setDialogTitle(dialogType)" @close="dialogClose">
       <el-form :rules="addRules" :model="temp" ref="tempForm" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
-        <el-form-item label="设备名称" prop="machineBrand">
-          <el-input v-model="temp.machineBrand" placeholder="请输入设备名称" />
-        </el-form-item>
-        <el-form-item label="设备ID" prop="machineParam">
-          <el-input v-model="temp.machineParam" placeholder="请输入设备ID" :disabled="dialogType!='new'"/>
-        </el-form-item>
-        <el-form-item label="所有者" prop="userId">
-          <el-select v-if="userType=='admin'" v-model="temp.userId" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for="(item,index) in userList" :key="item.id" :label="item.username" :value="item.id"></el-option>
-          </el-select>
-          <el-input v-else v-model="name" readonly/>
-        </el-form-item>
-        <el-form-item label="所属门店" prop="storeId">
-          <el-select v-model="temp.storeId" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for="item in storeList" :key="item.id" :label="item.storeName" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属地" prop="machineCity">
-          <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
-        </el-form-item>
-        <el-form-item v-if="dialogType!='message'" label="工作时长(s)" prop="usedDuration">
-          <el-col :span="12">
-            <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" disabled/>
-          </el-col>
-          <el-col v-if="dialogType!='new'" :offset="1" :span="4">
-            <el-button type="danger" @click="temp.usedDuration=0">重置</el-button>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="合作方式" prop="cooperationMode">
-          <el-select v-model="temp.cooperationMode" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for='item in list.cooperationMode' :key="item.key" :label="item.text" :value="item.key"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="授权状态" prop="machineStatus">
-          <el-select v-model="temp.machineStatus" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for='item in list.machineStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="设备类型" prop="machineType">
-          <el-select v-model="temp.machineType" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for='item in list.machineType' :key="item.key" :label="item.text" :value="item.key"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="功能类型" prop="machineFunction">
-          <el-select v-model="temp.machineFunction" placeholder="请选择" clearable class="filter-item">
-            <el-option label="美容美白" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="dialogType=='message'" label="apk附件：" prop="apkUpload">
-          <el-upload
-            ref="apkUpload"
-            class="upload-demo"
-            :limit="1"
-            action="/dev-api/uploadFile/upload?fileType=apk"
-            :before-upload="handleUpload"
-            :on-success="handleSucess"
-            :file-list="apkFileList">
-            <el-button size="small" type="primary" @click='uploadType="apk"'>上传apk文件</el-button>
-          </el-upload>
-        </el-form-item>
-        <el-form-item v-if="dialogType=='message'" label="bin附件：" prop="binUpload">
-          <el-upload
-            ref="apkUpload"
-            class="upload-demo"
-            :limit="1"
-            action="/dev-api/uploadFile/upload?fileType=apk"
-            :before-upload="handleUpload"
-            :on-success="handleSucess"
-            :file-list="binFileList">
-            <el-button size="small" type="primary" @click='uploadType="bin"'>上传bin文件</el-button>
-          </el-upload>
-        </el-form-item>
+        <template v-if="dialogType!='message'">
+          <el-form-item label="设备名称" prop="machineBrand">
+            <el-input v-model="temp.machineBrand" placeholder="请输入设备名称" />
+          </el-form-item>
+          <el-form-item label="设备ID" prop="machineParam">
+            <el-input v-model="temp.machineParam" placeholder="请输入设备ID" :disabled="dialogType!='new'"/>
+          </el-form-item>
+          <el-form-item label="所有者" prop="userId">
+            <el-select v-model="temp.userId" placeholder="请选择" clearable class="filter-item">
+              <el-option v-for="(item,index) in userList" :key="item.id" :label="item.username" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="所属门店" prop="storeId">
+            <el-select v-model="temp.storeId" placeholder="请选择" clearable class="filter-item">
+              <el-option v-for="item in limitStoreList" :key="item.id" :label="item.storeName" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="所属地" prop="machineCity">
+            <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
+          </el-form-item>
+          <el-form-item label="工作时长(s)" prop="usedDuration">
+            <el-col :span="12">
+              <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" disabled/>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="剩余时间(s)" prop="leftTime">
+            <el-col :span="12">
+              <el-input v-model="temp.cooperationMode=='FullPayment'?'-':temp.leftTime" disabled/>
+            </el-col>
+          </el-form-item>
+          <el-form-item v-if="dialogType=='edit'" label="故障信息" prop="otherParm">
+            <el-col :span="12">
+              <el-input v-model="temp.otherParm" disabled/>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="合作方式" prop="cooperationMode">
+            <el-select v-if="userType=='admin'" v-model="temp.cooperationMode" placeholder="请选择" clearable class="filter-item">
+              <el-option v-for='item in list.cooperationMode' :key="item.key" :label="item.text" :value="item.key"></el-option>
+            </el-select>
+            <el-input v-else :value="changeText(temp.cooperationMode,'cooperationMode')" disabled/>
+          </el-form-item>
+          <el-form-item label="授权状态" prop="machineStatus">
+            <el-select v-model="temp.machineStatus" placeholder="请选择" clearable class="filter-item">
+              <el-option v-for='item in list.machineStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="设备类型" prop="machineType">
+            <el-select v-model="temp.machineType" placeholder="请选择" clearable class="filter-item">
+              <el-option v-for='item in list.machineType' :key="item.key" :label="item.text" :value="item.key"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="功能类型" prop="machineFunction">
+            <el-select v-model="temp.machineFunction" placeholder="请选择" clearable class="filter-item">
+              <el-option label="美容美白" value="1"></el-option>
+            </el-select>
+          </el-form-item>
+        </template>
+        <template v-else>
+          <el-form-item v-if="dialogType=='message'" label="apk附件：" prop="apkUpload">
+            <el-upload
+              ref="apkUpload"
+              class="upload-demo"
+              :limit="1"
+              action="/dev-api/uploadFile/upload?fileType=apk"
+              :before-upload="handleUpload"
+              :on-success="handleSucess"
+              :file-list="apkFileList">
+              <el-button size="small" type="primary" @click='uploadType="apk"'>上传apk文件</el-button>
+            </el-upload>
+          </el-form-item>
+          <el-form-item v-if="dialogType=='message'" label="bin附件：" prop="binUpload">
+            <el-upload
+              ref="apkUpload"
+              class="upload-demo"
+              :limit="1"
+              action="/dev-api/uploadFile/upload?fileType=apk"
+              :before-upload="handleUpload"
+              :on-success="handleSucess"
+              :file-list="binFileList">
+              <el-button size="small" type="primary" @click='uploadType="bin"'>上传bin文件</el-button>
+            </el-upload>
+          </el-form-item>
+        </template>
       </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">取消</el-button>
@@ -175,59 +191,25 @@
         <el-button type="primary" @click="sendNotice">发送</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="demo-form" title="创建订单" :visible.sync="dialogOrderVisible">
+    <el-dialog class="demo-form" title="创建订单" :visible.sync="dialogOrderVisible" @close="dialogOrderClose">
       <el-form :rules="addOrderRules" :model="order" ref="tempOrderForm" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="设备名称" prop="machineBrand">
-          <el-input v-model="order.machineBrand" placeholder="请输入设备名称" readonly/>
+          <el-input v-model="order.machineBrand" readonly/>
         </el-form-item>
         <el-form-item label="设备ID" prop="machineParam">
           <el-input v-model="order.machineParam" placeholder="请输入设备ID" :disabled="dialogType!='new'" readonly/>
         </el-form-item>
         <el-form-item label="所有者" prop="userId">
-          <el-select v-if="userType=='admin'" v-model="order.userId" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for="(item,index) in userList" :key="item.id" :label="item.username" :value="item.id"></el-option>
-          </el-select>
-          <el-input v-else v-model="name" readonly/>
+          <el-input v-model="order.owner" readonly/>
         </el-form-item>
         <el-form-item label="所属门店" prop="storeId">
-          <el-select v-model="order.storeId" placeholder="请选择" clearable class="filter-item">
-            <el-option v-for="item in storeList" :key="item.id" :label="item.storeName" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="订单号" prop="companyName">
-          <el-input v-model="order.orderNo"/>
-        </el-form-item>
-        <el-form-item label="订单类型" prop="companyName">
-          <el-input v-model="order.orderType"/>
-        </el-form-item>
-        <el-form-item label="订单状态" prop="companyName">
-          <el-input v-model="order.orderStatus"/>
-        </el-form-item>
-        <el-form-item label="下单时间" prop="createTime">
-          <el-date-picker
-            v-model="order.createTime"
-            type="date"
-            placeholder="选择下单时间">
-          </el-date-picker>
+          <el-input v-model="order.belongsStore" readonly/>
         </el-form-item>
         <el-form-item label="项目内容" prop="orderContent">
           <el-input v-model="order.orderContent"/>
         </el-form-item>
-        <el-form-item label="操作时间" prop="operationTime">
-          <el-date-picker
-            v-model="order.operationTime"
-            type="date"
-            placeholder="选择下单时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="价格" prop="price">
-          <el-input v-model="order.price"/>
-        </el-form-item>
-        <el-form-item label="付款状态" prop="payStatus">
-          <el-input v-model="order.payStatus"/>
-        </el-form-item>
-        <el-form-item label="下单人" prop="machineParam">
-          <el-input v-model="order.machineParam"/>
+        <el-form-item label="充值次数" prop="price">
+          <el-input-number v-model="order.price" controls-position="right" :min="1"></el-input-number>
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -239,7 +221,6 @@
 </template>
 
 <script>
-    import path from 'path'
     import { deepClone } from '@/utils'
     import { getUsers} from '@/api/user'
     import { getAllStore,addOrder } from '@/api'
@@ -262,6 +243,7 @@
         machineType: "",
         machineWorkTimeOnce: 0,
         usedDuration:0,
+        leftTime:0,
         userId:"",
         storeId:""
     }
@@ -269,7 +251,7 @@
         "agentId": "",
         "createTime": "",
         "machineParam": "",
-        "operationTime": "",
+        "operationTime": new Date(),
         "orderContent": "",
         "orderNo": "",
         "orderStatus": "",
@@ -300,10 +282,9 @@
                 },
                 list:{
                     cooperationMode:[
-                        {text:'全款销售',key:'FullPayment'},
-                        {text:'定金销售',key:'Deposit'},
+                        {text:'全款',key:'FullPayment'},
                         {text:'分期付款',key:'Stages'},
-                        {text:'租赁',key:'Rent'},
+                        {text:'共享店铺',key:'Rent'},
                         {text:'试用',key:'Trial'}
                     ],
                     machineStatus:[
@@ -380,7 +361,16 @@
                     }]
                 },
                 addOrderRules:{
-
+                    orderContent:[{
+                        required: true,
+                        message: '请输入项目内容',
+                        trigger: 'blur'
+                    }],
+                    price:[{
+                        required: true,
+                        message: '请输入充值次数',
+                        trigger: 'blur'
+                    }],
                 },
                 apkFileList: [],
                 binFileList: [],
@@ -425,9 +415,14 @@
                         return '修改'
                     }
                     if(value=='message'){
-                        return '发送信息'
+                        return '升级'
                     }
                 }
+            },
+            limitStoreList(){
+                return this.storeList.filter((item)=>{
+                    return item.agentId == this.temp.userId
+                })
             }
         },
         created() {
@@ -435,9 +430,7 @@
             this.getMachines()
             this.initMqtt()
             this.getAllStore()
-            if(this.userType == "admin"){
-                this.getUsers()
-            }
+            this.getUsers()
         },
         methods: {
             async getAllStore() {
@@ -489,10 +482,19 @@
             },
             dialogClose(){
                 this.$refs['tempForm'].resetFields();
+                this.apkUrl = '';
+                this.apkFileList = [];
+                this.binUrl = '';
+                this.binFileList = [];
+            },
+            dialogOrderClose(){
+                this.$refs['tempOrderFormc v[]pfxghkl'].resetFields();
             },
             async getUsers() {
                 const res = await getUsers({})
-                this.userList = res.data;
+                this.userList = res.data.filter((item)=>{
+                    return item.userType != "admin"
+                });
             },
             getAreaName(data) {
                 this.temp.machineProvice = data.province.value
@@ -529,10 +531,12 @@
                 }
             },
             handleSelectionChange(selection) {
-                this.checkedGh = deepClone(selection[0])||{};
-                if (selection.length > 1) {
-                    this.$refs.tb.clearSelection();
-                    this.$refs.tb.toggleRowSelection(selection.pop());
+                if(selection.length>0){
+                    this.checkedGh = deepClone(selection[0])||{};
+                    if (selection.length > 1) {
+                        this.$refs.tb.clearSelection();
+                        this.$refs.tb.toggleRowSelection(selection.pop());
+                    }
                 }
             },
             handleFilter() {
@@ -556,7 +560,7 @@
                     });
                     return false
                 }
-                this.dialogType = 'message'
+                this.dialogType = 'message';
                 this.dialogVisible = true;
                 this.temp = deepClone(this.checkedGh);
             },
@@ -574,8 +578,7 @@
                 this.dialogType = 'new'
                 this.dialogVisible = true
                 this.temp = Object.assign({}, defaultMachine);
-                this.temp.userId = this.name;
-                this.temp.userId = Number(this.userId);
+                this.temp.userId = this.userList[0].id;
             },
             handleEdit(scope) {
                 this.dialogType = 'edit'
@@ -619,7 +622,9 @@
                         }
                         console.log("===============111======="+JSON.stringify(param));
                         this.client.publish(topic, JSON.stringify(param));
-                        this.getMachines()
+                        setTimeout(()=>{
+                            this.getMachines()
+                        },3000);
                     })
                     .catch(err => {
                         console.error(err)
@@ -629,6 +634,10 @@
                 this.dialogOrderVisible = true;
                 this.order.machineBrand = scope.row.machineBrand;
                 this.order.machineParam = scope.row.machineParam;
+                this.order.agentId = scope.row.userId;
+                this.order.store_id = scope.row.storeId;
+                this.order.owner = scope.row.owner;
+                this.order.belongsStore = scope.row.belongsStore;
                 console.log(scope)
             },
             OrderSave(){

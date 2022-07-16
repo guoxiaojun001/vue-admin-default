@@ -21,7 +21,7 @@
       </el-table-column>
       <el-table-column align="center" label="所属代理商">
         <template slot-scope="scope">
-          {{ scope.row.agentId }}
+          {{ scope.row.owner }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="门店地址">

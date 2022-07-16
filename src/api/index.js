@@ -45,7 +45,7 @@ export function deleteOrder(id) {
   })
 }
 
-export function addOrder() {
+export function addOrder(data) {
   return request({
     url: '/order/addOrder',
     method: 'post',
@@ -53,3 +53,10 @@ export function addOrder() {
   })
 }
 
+export function updateOrder(data) {
+  return request({
+    url: '/order/updateOrder',
+    method: 'post',
+    data
+  })
+}
