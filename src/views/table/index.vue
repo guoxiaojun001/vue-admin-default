@@ -223,7 +223,7 @@
 </template>
 
 <script>
-    import { deepClone } from '@/utils'
+    import { deepClone,parseTime } from '@/utils'
     import { getUsers} from '@/api/user'
     import { getAllStore,addOrder } from '@/api'
     import { getMachine, addMachine, deleteMachine, updateMachine,sendMachine } from '@/api/machine'
