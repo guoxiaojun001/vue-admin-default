@@ -79,14 +79,6 @@
         <el-form-item label="设备数量" prop="newDeviceCount">
           <el-input v-model.number="store.newDeviceCount" placeholder="请输入设备数量" readonly disabled/>
         </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-date-picker
-            v-model="store.createTime"
-            type="date"
-            placeholder="选择创建时间"
-            :disabled="dialogType==='edit'">
-          </el-date-picker>
-        </el-form-item>
         <el-form-item label="门店地址" prop="address">
           <el-input
             v-model="store.address"
@@ -106,7 +98,7 @@
 
 <script>
 import path from 'path'
-import { deepClone } from '@/utils'
+import { deepClone,parseTime } from '@/utils'
 import { rule } from '@/utils/validate'
 import { getAllStore, addStore, updateStore, deleteStore } from '@/api'
 import { getUsers} from '@/api/user'
@@ -122,7 +114,7 @@ const defaultRole = {
   newDeviceCount: 0,
   agentId:'',
   code:"",
-  createTime:new Date(),
+  createTime:parseTime(new Date().getTime()),
   version:0
 }
 
@@ -203,11 +195,6 @@ export default {
           required: true,
           message: '请输入设备数量',
           trigger: 'blur'
-        }],
-        createTime:[{
-            required: true,
-            message: '请输入门店创建时间',
-            trigger: 'change'
         }],
         address:[{
           required: true,

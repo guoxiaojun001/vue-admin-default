@@ -16,11 +16,11 @@
           {{ scope.row.orderNo }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="订单状态">
+      <!--<el-table-column align="center" label="订单状态">
         <template slot-scope="scope">
           {{ changeText(scope.row.orderStatus,'orderStatus') }}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column align="center" label="下单时间">
         <template slot-scope="scope">
           {{ scope.row.createTime }}
@@ -71,8 +71,11 @@
             <el-option v-for='item in list.payStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="设备名称" prop="machineBrand">
-          <el-input v-model="role.machineBrand" disabled/>
+        <el-form-item label="门店名称" prop="stName">
+          <el-input v-model="role.stName" disabled/>
+        </el-form-item>
+        <el-form-item label="设备名称" prop="machineName">
+          <el-input v-model="role.machineName" disabled/>
         </el-form-item>
         <el-form-item label="设备ID" prop="machineParam">
           <el-input v-model="role.machineParam" disabled/>
@@ -87,14 +90,14 @@
 </template>
 
 <script>
-import { deepClone } from '@/utils'
+import { deepClone,parseTime } from '@/utils'
 import { getOrderList,deleteOrder,updateOrder } from '@/api'
 import Pagination from '@/components/Pagination'
 const defaultOrder = {
     "agentId": "",
     "createTime": "",
     "machineParam": "",
-    "operationTime": new Date(),
+    "operationTime": parseTime(new Date().getTime()),
     "orderContent": "",
     "orderNo": "",
     "orderStatus": "",

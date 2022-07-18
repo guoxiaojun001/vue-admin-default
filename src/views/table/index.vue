@@ -95,6 +95,9 @@
           <el-form-item label="设备ID" prop="machineParam">
             <el-input v-model="temp.machineParam" placeholder="请输入设备ID" :disabled="dialogType!='new'"/>
           </el-form-item>
+          <el-form-item label="设备sn" prop="deviceSn">
+            <el-input v-model="temp.deviceSn" placeholder="请输入设备sn" :disabled="dialogType!='new'"/>
+          </el-form-item>
           <el-form-item label="所有者" prop="userId">
             <el-select v-model="temp.userId" placeholder="请选择" clearable class="filter-item">
               <el-option v-for="(item,index) in userList" :key="item.id" :label="item.username" :value="item.id"></el-option>
@@ -108,12 +111,12 @@
           <el-form-item label="所属地" prop="machineCity">
             <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
           </el-form-item>
-          <el-form-item label="工作时长(s)" prop="usedDuration">
+          <el-form-item v-if="dialogType!='new'" label="工作时长(s)" prop="usedDuration">
             <el-col :span="12">
               <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" disabled/>
             </el-col>
           </el-form-item>
-          <el-form-item label="剩余时间(s)" prop="leftTime">
+          <el-form-item v-if="dialogType!='new'" label="剩余时间(s)" prop="leftTime">
             <el-col :span="12">
               <el-input v-model="temp.cooperationMode=='FullPayment'?'-':temp.leftTime" disabled/>
             </el-col>
@@ -243,6 +246,7 @@
         machineWorkTimeOnce: 0,
         usedDuration:0,
         leftTime:0,
+        deviceSn:"",
         userId:"",
         storeId:""
     }
@@ -250,7 +254,7 @@
         "agentId": "",
         "createTime": "",
         "machineParam": "",
-        "operationTime": new Date(),
+        "operationTime": parseTime(new Date().getTime()),
         "orderContent": "",
         "orderNo": "",
         "orderStatus": "",
@@ -316,6 +320,11 @@
                     machineParam:[{
                         required: true,
                         message: '请输入设备ID',
+                        trigger: 'blur'
+                    }],
+                    deviceSn:[{
+                        required: true,
+                        message: '请输入设备sn',
                         trigger: 'blur'
                     }],
                     usedDuration:[{
@@ -530,12 +539,10 @@
                 }
             },
             handleSelectionChange(selection) {
-                if(selection.length>0){
-                    this.checkedGh = deepClone(selection[0])||{};
-                    if (selection.length > 1) {
-                        this.$refs.tb.clearSelection();
-                        this.$refs.tb.toggleRowSelection(selection.pop());
-                    }
+                this.checkedGh = deepClone(selection[0]||{});
+                if (selection.length > 1) {
+                    this.$refs.tb.clearSelection();
+                    this.$refs.tb.toggleRowSelection(selection.pop());
                 }
             },
             handleFilter() {
@@ -612,12 +619,11 @@
                     type: 'warning'
                 })
                     .then(() => {
-                        let topic = "/machineParam/device_status"; //和后台约定好的主题
+                        let topic = "/" + row.machineParam + "/device_status"; //和后台约定好的主题
                         const param = {
                             messsageType: 'vue_lock',
                             lockStatus: row.lockStatus ? 0 : 1,
-                            userId: row.userId,
-                            machineParam: row.machineParam
+                            userId: row.userId
                         }
                         console.log("===============111======="+JSON.stringify(param));
                         this.client.publish(topic, JSON.stringify(param));
@@ -698,12 +704,11 @@
                 }
             },
             sendNotice(){
-                let topic = "/machineParam/device_status"; //和后台约定好的主题
+                let topic = "/" + this.checkedGh.machineParam + "/device_status"; //和后台约定好的主题
                 const param = {
                     messsageType:'vue_notice',
                     title:this.notice.title,
-                    content:this.notice.content,
-                    machineParam:this.checkedGh.machineParam
+                    content:this.notice.content
                 }
                 this.client.publish(topic, JSON.stringify(param));
                 this.dialogNoticeVisible = false;
