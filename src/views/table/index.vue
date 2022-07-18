@@ -452,7 +452,7 @@
                     clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
                     username: "admin",
                     password: "qunimabi#123$456",
-                    clean: false
+                    clean: true
                 };
                 let commonApi = "ws://39.98.108.64:8083/mqtt";
                 this.client = mqtt.connect(commonApi, options);
@@ -640,7 +640,7 @@
                 this.order.machineBrand = scope.row.machineBrand;
                 this.order.machineParam = scope.row.machineParam;
                 this.order.agentId = scope.row.userId;
-                this.order.store_id = scope.row.storeId;
+                this.order.storeId = scope.row.storeId;
                 this.order.owner = scope.row.owner;
                 this.order.belongsStore = scope.row.belongsStore;
                 console.log(scope)
