@@ -10,9 +10,9 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-edit" @click="handleAddMachine">创建</el-button>
       </el-form-item>
-      <el-form-item>
+<!--      <el-form-item>
         <el-button type="success" @click="handleMessage">升级</el-button>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="warning" @click="handleNotice">发送通知</el-button>
       </el-form-item>
@@ -67,7 +67,7 @@
       </el-table-column>
       <el-table-column align="center" label="剩余时间">
         <template slot-scope="scope">
-          {{ scope.row.cooperationMode=='FullPayment'?'-':scope.row.leftTime+'s' }}
+          {{ changeLeftTime(scope.row)+'次' }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="访问记录">
@@ -116,9 +116,9 @@
               <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" disabled/>
             </el-col>
           </el-form-item>
-          <el-form-item v-if="dialogType!='new'" label="剩余时间(s)" prop="leftTime">
+          <el-form-item v-if="dialogType!='new'" label="剩余时间(次)" prop="leftTime">
             <el-col :span="12">
-              <el-input v-model="temp.cooperationMode=='FullPayment'?'-':temp.leftTime" disabled/>
+              <el-input :value="changeLeftTime(temp)" disabled/>
             </el-col>
           </el-form-item>
           <el-form-item v-if="dialogType=='edit'" label="故障信息" prop="otherParm">
@@ -431,6 +431,16 @@
                 return this.storeList.filter((item)=>{
                     return item.agentId == this.temp.userId
                 })
+            },
+            changeLeftTime(){
+              return function (val){
+                if(val.cooperationMode=='FullPayment'){
+                  return '-'
+                }else{
+                  return parseInt(val.leftTime/2700)
+                }
+
+              }
             }
         },
         created() {
