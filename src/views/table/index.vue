@@ -291,9 +291,11 @@
                         {text:'试用',key:'Trial'}
                     ],
                     machineStatus:[
-                        {text:'工作',key:'Working'},
-                        {text:'停止',key:'Idle'},
-                        {text:'黑名单',key:'Blacklist'}
+                        {text:'工作',key:'1'},
+                        {text:'停止',key:'2'},
+                        {text:'黑名单',key:'3'},
+                        {text:'锁定',key:'4'},
+                        {text:'解锁',key:'5'}
                     ],
                     machineType:[
                         {text:'光学类',key:'Optics'},
