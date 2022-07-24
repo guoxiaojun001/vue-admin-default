@@ -637,7 +637,7 @@
                     })
             },
             handleLock({ $index, row }) {
-                let msg = row.lockStatus ? '解锁' : '锁定'
+                let msg = row.lockStatus ? '锁定' : '解锁'
                 this.$confirm('确认要' + msg + '该设备?', '提示', {
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',
@@ -647,7 +647,7 @@
                         let topic = "/" + row.machineParam + "/device_status"; //和后台约定好的主题
                         const param = {
                             messsageType: 'vue_lock',
-                            lockStatus: row.lockStatus ? 0 : 1,
+                            lockStatus: row.lockStatus ? 1 : 0,
                             userId: row.userId
                         }
                         console.log("===============111======="+JSON.stringify(param));
