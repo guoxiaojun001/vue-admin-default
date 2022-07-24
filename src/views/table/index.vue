@@ -67,7 +67,9 @@
       </el-table-column>
       <el-table-column align="center" label="剩余时间">
         <template slot-scope="scope">
-          {{ changeLeftTime(scope.row)+'次，'+scope.row.leftTime+'s'}}
+          <!-- {{ changeLeftTime(scope.row)+'次，'+scope.row.leftTime+'秒'}} -->
+          <p>{{ changeLeftTime(scope.row)+'次，'}}</p>
+          {{scope.row.leftTime+'秒'}}
         </template>
       </el-table-column>
       <el-table-column align="center" label="访问记录">
