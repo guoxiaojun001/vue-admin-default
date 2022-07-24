@@ -80,7 +80,7 @@
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">查看</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
-          <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="scope.row.onlineStatus!=1">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
+          <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="scope.row.onlineStatus!=1">{{scope.row.lockStatus>0?'锁定':'解锁'}}</el-button>
           <el-button type="primary" size="small" @click="createOrder(scope)" :disabled="scope.row.cooperationMode=='FullPayment'" >创建订单</el-button>
         </template>
       </el-table-column>
@@ -134,6 +134,11 @@
           <el-form-item label="授权状态" prop="machineStatus">
             <el-select v-model="temp.machineStatus" placeholder="请选择" clearable class="filter-item">
               <el-option v-for='item in list.machineStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="锁定状态" prop="lockStatus">
+            <el-select v-model="temp.lockStatus" placeholder="请选择" clearable class="filter-item" :disabled="dialogType=='new'||temp.onlineStatus!=1">
+              <el-option v-for='item in list.lockStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="设备类型" prop="machineType">
@@ -241,6 +246,7 @@
         machineProvice: "",
         machineProviceId: "",
         machineStatus: "",
+        lockStatus: 1,
         cooperationMode:"",
         machineType: "",
         machineWorkTimeOnce: 0,
@@ -291,11 +297,13 @@
                         {text:'试用',key:'Trial'}
                     ],
                     machineStatus:[
-                        {text:'工作',key:'1'},
-                        {text:'停止',key:'2'},
-                        {text:'黑名单',key:'3'},
-                        {text:'锁定',key:'4'},
-                        {text:'解锁',key:'5'}
+                      {text:'工作',key:'Working'},
+                      {text:'停止',key:'Idle'},
+                      {text:'黑名单',key:'Blacklist'}
+                    ],
+                    lockStatus:[
+                      {text:'锁定',key:1},
+                      {text:'解锁',key:0}
                     ],
                     machineType:[
                         {text:'光学类',key:'Optics'},
@@ -353,6 +361,11 @@
                         required: true,
                         message: '请选择',
                         trigger: 'change'
+                    }],
+                    lockStatus:[{
+                      required: true,
+                      message: '请选择',
+                      trigger: 'change'
                     }],
                     machineFunction:[{
                         required: true,
