@@ -80,7 +80,7 @@
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">查看</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
-          <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="scope.row.onlineStatus!=1">{{scope.row.lockStatus>0?'锁定':'解锁'}}</el-button>
+          <el-button type="warning" size="small" @click="handleLock(scope)" :disabled="scope.row.onlineStatus!=1">{{scope.row.lockStatus?'解锁':'锁定'}}</el-button>
           <el-button type="primary" size="small" @click="createOrder(scope)" :disabled="scope.row.cooperationMode=='FullPayment'" >创建订单</el-button>
         </template>
       </el-table-column>
@@ -637,7 +637,7 @@
                     })
             },
             handleLock({ $index, row }) {
-                let msg = row.lockStatus ? '锁定' : '解锁'
+                let msg = row.lockStatus ? '解锁' : '锁定'
                 this.$confirm('确认要' + msg + '该设备?', '提示', {
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',
@@ -647,7 +647,7 @@
                         let topic = "/" + row.machineParam + "/device_status"; //和后台约定好的主题
                         const param = {
                             messsageType: 'vue_lock',
-                            lockStatus: row.lockStatus ? 1 : 0,
+                            lockStatus: row.lockStatus ? 0 : 1,
                             userId: row.userId
                         }
                         console.log("===============111======="+JSON.stringify(param));
