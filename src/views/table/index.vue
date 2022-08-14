@@ -78,6 +78,13 @@
           <el-tag size="mini" :type="scope.row.onlineStatus==1?'success':'info'">{{ scope.row.onlineStatus==1?"在线":"离线"}}</el-tag>
         </template>
       </el-table-column>
+
+    <el-table-column align="center" label="实际定位">
+         <template slot-scope="scope">
+          {{ scope.row.otherParm }}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="操作" width="300" fixed="right">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">查看</el-button>
