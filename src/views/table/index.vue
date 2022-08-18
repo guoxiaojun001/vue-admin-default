@@ -68,8 +68,8 @@
       <el-table-column align="center" label="剩余时间">
         <template slot-scope="scope">
           <!-- {{ changeLeftTime(scope.row)+'次，'+scope.row.leftTime+'秒'}} -->
-          <p>{{ changeLeftTime(scope.row)+'次，'}}</p>
-          {{scope.row.leftTime+'秒'}}
+          <p>{{ changeLeftTime(scope.row)+'次'}}</p>
+          {{parseInt(scope.row.leftTime/60)+'分'}}
         </template>
       </el-table-column>
       <el-table-column align="center" label="访问记录">
@@ -157,7 +157,8 @@
           </el-form-item>
           <el-form-item label="功能类型" prop="machineFunction">
             <el-select v-model="temp.machineFunction" placeholder="请选择" clearable class="filter-item">
-              <el-option label="美容美白" value="1"></el-option>
+              <!-- <el-option label="美容美白" value="1"></el-option> -->
+               <el-option v-for='item in list.machineFunction' :key="item.key" :label="item.text" :value="item.key"></el-option>
             </el-select>
           </el-form-item>
         </template>
@@ -322,7 +323,8 @@
                         {text:'其它',key:'Other'}
                     ],
                     machineFunction:[
-                        {text:'美容美白',key:1}
+                        {text:'美容美白',key:1},
+                        {text:'抗衰',key:2}
                     ]
                 },
                 temp:Object.assign({}, defaultMachine),
