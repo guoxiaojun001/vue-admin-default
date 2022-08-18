@@ -75,7 +75,7 @@
       <el-table-column align="center" label="访问记录">
         <template slot-scope="scope">
           <p>{{ scope.row.lastloginTime }}</p>
-          <el-tag size="mini" :type="scope.row.onlineStatus==1?'success':'info'">{{ scope.row.onlineStatus==1?"在线":"离线"}}</el-tag>
+          <el-tag size="small"   effect="dark" :type="scope.row.onlineStatus==1?'success':'info'">{{ scope.row.onlineStatus==1?"在线":"离线"}}</el-tag>
         </template>
       </el-table-column>
 
