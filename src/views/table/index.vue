@@ -62,7 +62,7 @@
       </el-table-column>
       <el-table-column align="center" label="工作时长">
         <template slot-scope="scope">
-          {{ scope.row.cooperationMode=='FullPayment'?'-':scope.row.usedDuration+'s' }}
+          {{ scope.row.cooperationMode=='FullPayment'?'-':parseInt(scope.row.usedDuration/60)+'分'}}
         </template>
       </el-table-column>
       <el-table-column align="center" label="剩余时间">
@@ -96,7 +96,7 @@
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.curPage" :limit.sync="listQuery.pageSize" @pagination="getMachines" />
     <el-dialog class="demo-form" :visible.sync="dialogVisible" :title="setDialogTitle(dialogType)" @close="dialogClose">
-      <el-form :rules="addRules" :model="temp" ref="tempForm" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
+      <el-form :rules="addRules" :model="temp" ref="tempForm" label-width="110px" label-position="left" style="width: 80%; margin-left:10%;">
         <template v-if="dialogType!='message'">
           <el-form-item label="设备名称" prop="machineBrand">
             <el-input v-model="temp.machineBrand" placeholder="请输入设备名称" />
@@ -120,9 +120,9 @@
           <el-form-item label="所属地" prop="machineCity">
             <v-distpicker :province="temp.machineProvice" :city="temp.machineCity" hide-area :placeholders="placeholders"  @selected="getAreaName" />
           </el-form-item>
-          <el-form-item v-if="dialogType!='new'" label="工作时长(s)" prop="usedDuration">
+          <el-form-item v-if="dialogType!='new'" label="工作时长(分)" prop="usedDuration">
             <el-col :span="12">
-              <el-input v-model="temp.usedDuration" placeholder="请输入工作时长" disabled/>
+              <el-input :value="parseInt(temp.usedDuration/60)" placeholder="请输入工作时长" disabled/>
             </el-col>
           </el-form-item>
           <el-form-item v-if="dialogType!='new'" label="剩余时间(次)" prop="leftTime">
@@ -532,7 +532,7 @@
                 this.binFileList = [];
             },
             dialogOrderClose(){
-                this.$refs['tempOrderFormc v[]pfxghkl'].resetFields();
+                this.$refs['tempOrderForm'].resetFields();
             },
             async getUsers() {
                 const res = await getUsers({})
@@ -589,7 +589,7 @@
                 this.listLoading = true
                 const res = await getMachine(this.listQuery)
                 this.machineList = res.data;
-                this.total = res.data.length;
+                this.total = res.counts;
                 setTimeout(() => {
                     this.listLoading = false
                 }, 1000)

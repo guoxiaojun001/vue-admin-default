@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getUsers" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getUsers" />
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'修改':'创建'" @close="dialogClose">
       <el-form ref="tempForm" :model="role" :rules="rules" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="用户类型" prop="userType">
@@ -132,7 +132,7 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 20,
+        pageSize: 20,
         parms: ''
       },
       rules: {
@@ -195,7 +195,7 @@ export default {
       this.listLoading = true;
       const res = await getUsers(this.listQuery)
       this.rolesList = res.data;
-      this.total = res.data.length;
+      this.total = res.counts;
       setTimeout(() => {
         this.listLoading = false
       }, 1.5 * 1000)

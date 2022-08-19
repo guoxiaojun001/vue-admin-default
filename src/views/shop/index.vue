@@ -56,7 +56,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getAllStore" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getAllStore" />
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'修改':'创建'" @close="dialogClose">
       <el-form ref="tempForm" :model="store" :rules="rules" label-width="100px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="门店名称" prop="storeName">
@@ -162,7 +162,7 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 20,
+        pageSize: 20,
         parms:'',
       },
       rules: {
@@ -254,7 +254,7 @@ export default {
       this.listLoading = true;
       const res = await getAllStore(this.listQuery)
       this.storeList = res.data;
-      this.total = res.data.length;
+      this.total = res.counts;
       setTimeout(() => {
         this.listLoading = false
       }, 1.5 * 1000)

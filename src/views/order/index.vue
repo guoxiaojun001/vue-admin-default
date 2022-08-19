@@ -48,7 +48,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getOrderList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getOrderList" />
     <el-dialog :visible.sync="dialogVisible" title="详情" @close="dialogClose">
       <el-form ref="tempForm" :model="role" label-width="80px" label-position="left" style="width: 80%; margin-left:10%;">
         <el-form-item label="订单号" prop="orderNo">
@@ -67,7 +67,7 @@
           <el-input v-model="role.price" disabled/>
         </el-form-item>
         <el-form-item label="付款状态" prop="payStatus">
-          <el-select v-model="role.payStatus" placeholder="请选择" clearable class="filter-item">
+          <el-select v-model="role.payStatus" placeholder="请选择" clearable class="filter-item" :disabled="role.payStatus==2">
             <el-option v-for='item in list.payStatus' :key="item.key" :label="item.text" :value="item.key"></el-option>
           </el-select>
         </el-form-item>
@@ -118,7 +118,7 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 20,
+        pageSize: 20,
         parms: '',
       },
       list:{
@@ -163,7 +163,7 @@ export default {
       this.listLoading = true;
       const res = await getOrderList(this.listQuery)
       this.rolesList = res.data;
-      this.total = res.data.length;
+      this.total = res.counts;
       setTimeout(() => {
         this.listLoading = false
       }, 1.5 * 1000)
