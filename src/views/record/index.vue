@@ -28,7 +28,7 @@
       </el-table-column>
       <el-table-column align="center" label="设备名称">
         <template slot-scope="scope">
-          {{ scope.row.storeName }}
+          {{ scope.row.machineBrand }}
         </template>
       </el-table-column>
 
@@ -42,7 +42,6 @@
           {{ scope.row.owner }} 
         </template>
       </el-table-column>
-
 
       <el-table-column align="center" label="使用地点">
         <template slot-scope="scope">
