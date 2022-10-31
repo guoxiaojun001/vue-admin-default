@@ -143,13 +143,13 @@ export const asyncRoutes = [
     redirect: '/record/index',
     alwaysShow: true,
     name: 'Record',
-    meta: { title: '使用记录', icon: 'list' },
+    meta: { title: '使用记录', icon: 'el-icon-s-unfold' },
     children: [
       {
         path: 'index',
         name: 'RecordIndex',
         component: () => import('@/views/record/index'),
-        meta: { title: '使用记录', icon: 'form' }
+        meta: { title: '使用记录', icon: 'el-icon-s-fold' }
       }
     ]
   },

@@ -7,8 +7,21 @@
       
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-        <el-button type="primary" icon="el-icon-search" @click="exportData">导出</el-button>
-      </el-form-item>
+        <!-- <el-button type="primary" icon="el-icon-search" @click="exportData">导出</el-button> -->
+        <!-- <input type="text" v-model="filename" placeholder="请输入导出的名字"> -->
+        <download-excel
+        class = "export-excel-wrapper"
+        :data = "recordList"
+        :fields = "json_fields"
+          header="设备使用记录详情"
+          name = "设备使用记录表.xls">     
+            <el-button type="primary" >导出EXCEL</el-button>       
+            <!-- <span @click="exportCurrent()"></span> -->
+        </download-excel>
+
+    </el-form-item>
+
+
     </el-form>
     <el-table :data="recordList" v-loading="listLoading"  style="width: 100%;" border >
       <el-table-column align="center" label="ID" width="80" prop="id" sortable>
@@ -88,7 +101,7 @@ export default {
     VDistpicker
   },
   data() {
-    return {
+    return {     
       record: Object.assign({}, defaultRole),
       recordList: [],
       dialogVisible: false,
@@ -105,6 +118,40 @@ export default {
         pageSize: 20,
         parms:'',
       },
+
+      json_fields: {
+        ID: "id",   
+        设备名称: "machineBrand",
+        所属门店: "storeName",
+        所有者信息:"owner",
+        使用地点: "place",    //如果命名的标题有空格,需要用双引号
+        启动时间:"startTime"
+      },
+      // json_data: [
+      //   {
+      //     name: "张三",
+      //     city: "北京",
+      //     country: "中国",
+      //     birthdate: "1998-03-15",
+      //     phone:"15645689652"
+      //   },
+      //   {
+      //     name: "李四",
+      //     city: "上海",
+      //     country: "中国",
+      //     birthdate: "1988-03-15",
+      //     phone:"15645689652"
+      //   }
+      // ],
+      json_meta: [
+        [
+          {
+            " key ": " charset ",
+            " value ": " utf- 8 "
+          }
+        ]
+      ]
+
   
     }
   },
@@ -148,17 +195,6 @@ export default {
 
     },
 
-    async exportData(){
-      this.jsonToXLS(this.recordList)
-    },
-
-    jsonToXLS(data) {
-  
-      //导出excel
-    },
-
-
-  
     handleDelete({ $index, row }) {
       this.$confirm('确认要删除该使用记录?', '提示', {
         confirmButtonText: '确认',
@@ -193,6 +229,12 @@ export default {
   }
   .permission-tree {
     margin-bottom: 30px;
+  }
+
+  .export-excel-wrapper{
+    display: inline-block;
+    margin-left: 20px;
+    height: max-content;
   }
 }
 </style>
