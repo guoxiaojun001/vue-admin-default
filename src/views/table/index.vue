@@ -94,7 +94,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.curPage" :limit.sync="listQuery.pageSize" @pagination="getMachines" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getMachines" />
     <el-dialog class="demo-form" :visible.sync="dialogVisible" :title="setDialogTitle(dialogType)" @close="dialogClose">
       <el-form :rules="addRules" :model="temp" ref="tempForm" label-width="110px" label-position="left" style="width: 80%; margin-left:10%;">
         <template v-if="dialogType!='message'">

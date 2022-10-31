@@ -18,17 +18,19 @@
     "core-js": "3.6.5",
     "echarts": "4.3.0",
     "element-ui": "2.13.2",
+    "file-saver": "^2.0.5",
     "js-cookie": "2.2.0",
+    "mqtt": "^2.18.9",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
     "screenfull": "^4.2.0",
     "v-distpicker": "^1.2.9",
-   
     "vue": "^2.5.2",
+    "vue-json-excel": "^0.3.0",
     "vue-router": "3.0.6",
     "vuex": "3.1.0",
-    "mqtt": "^2.18.9"
+    "xlsx": "^0.17.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.4",
